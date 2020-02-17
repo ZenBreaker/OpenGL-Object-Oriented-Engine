@@ -32,7 +32,7 @@ End Header --------------------------------------------------------*/
 #include "Engine.h"
 extern int windowWidth;
 extern int windowHeight;
-static const unsigned int const attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+static const unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 void renderQuad();
 RenderingManager::RenderingManager()
 {
@@ -119,7 +119,6 @@ void RenderingManager::PreRender(const Scene* scene)
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, Engine::get().m_Width, Engine::get().m_Height);
-
 }
 
 void RenderingManager::Render(const Scene* scene)

@@ -55,11 +55,7 @@ void Debug::Update()
 
   glUniformMatrix4fv(m_ViewUniform, 1, GL_FALSE, &Engine::get().m_RenderingManager.m_View[0][0]);
   glUniformMatrix4fv(m_PerspectiveUniform, 1, GL_FALSE, &Engine::get().m_RenderingManager.m_Projection[0][0]);
-  glm::mat4 identity(0);
-  for (int i = 0; i < 4; ++i)
-  {
-    identity[i][i] = 1;
-  }
+  glm::mat4 identity(1);
   
 
   glUniformMatrix4fv(m_ModelUniform, 1, GL_FALSE, &identity[0][0]);

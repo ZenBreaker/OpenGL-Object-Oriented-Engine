@@ -52,6 +52,7 @@ public:
   Input m_Input;
   Debug m_Debug;
 
+  float m_TimeScale;
   float m_DeltaTime;	// Time between current frame and last frame
   float m_LastFrame; // Time of last frame
 private:

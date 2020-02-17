@@ -70,6 +70,7 @@ void Editor::PostRender()
   ImGui::NewFrame();
   ImGui::Begin("Hello, world!");
 
+  if (ImGui::DragFloat("Time Scale", &Engine::get().m_TimeScale)) {}
   if (ImGui::DragFloat3("Eye Position Vector", &Engine::get().m_SceneManager.m_CurrentScene->m_Camera.m_Position[0])) {}
   if (ImGui::DragFloat3("Eye Direction Vector", &Engine::get().m_SceneManager.m_CurrentScene->m_Camera.m_Foward[0])) {}
   

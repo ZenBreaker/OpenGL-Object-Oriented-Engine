@@ -86,16 +86,16 @@ void MouseCallback(GLFWwindow* window, double xpos, double ypos)
   auto& input = Engine::get().m_Input;
   if (input.m_FirstMouse)
   {
-    input.m_LastX = xpos;
-    input.m_LastY = ypos;
+    input.m_LastX = (float)xpos;
+    input.m_LastY = (float)ypos;
     input.m_FirstMouse = false;
   }
 
-  float xoffset = xpos - input.m_LastX;
-  float yoffset = input.m_LastY - ypos; // reversed since y-coordinates go from bottom to top
+  float xoffset = (float)xpos - input.m_LastX;
+  float yoffset = input.m_LastY - (float)ypos; // reversed since y-coordinates go from bottom to top
 
-  input.m_LastX = xpos;
-  input.m_LastY = ypos;
+  input.m_LastX = (float)xpos;
+  input.m_LastY = (float)ypos;
 
   Engine::get().m_SceneManager.m_CurrentScene->m_Camera.MouseMovement(xoffset, yoffset);
 }

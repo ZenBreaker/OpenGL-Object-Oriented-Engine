@@ -43,6 +43,7 @@ void Engine::Init(int windowWidth, int windowHeight, const char* windowName, int
   m_Width = windowWidth;
   m_Height = windowHeight;
   m_DeltaTime = 0.0f;
+  m_TimeScale = 1.0f;
   m_LastFrame = 0.0f;
 
   //Init OpenGL
@@ -132,7 +133,7 @@ void Engine::PreRender()
   m_DeltaTime = currentFrame - m_LastFrame;
   m_LastFrame = currentFrame;
 
-  m_Input.ProcessInput(m_DeltaTime);
+  m_Input.ProcessInput(m_DeltaTime * m_TimeScale);
   
   if (glfwWindowShouldClose(m_Window))
   {
@@ -144,7 +145,7 @@ void Engine::PreRender()
 
 void Engine::Render()
 {
-  m_SceneManager.Update(m_DeltaTime);
+  m_SceneManager.Update(m_DeltaTime * m_TimeScale);
   m_RenderingManager.Render(m_SceneManager.m_CurrentScene);
 }
 
