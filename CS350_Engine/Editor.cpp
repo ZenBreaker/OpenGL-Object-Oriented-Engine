@@ -368,7 +368,8 @@ void Editor::PostRender()
         if (ImGui::DragFloat("Specular Exponent", &object.m_Material.specular_exponent)) {}
         if (ImGui::DragFloat3("Ambiant Color", &object.m_Material.ambiant_color[0])) {}
 
-        if (ImGui::Checkbox("Draw Bounds", &object.m_DrawBounds)) {}
+        if (ImGui::Checkbox("Draw AABB Bounds", &object.m_DrawAABB)) {}
+        if (ImGui::Checkbox("Draw Bounding Sphere", &object.m_DrawBoundingSphere)) {}
         ImGui::TreePop();
       }
     }

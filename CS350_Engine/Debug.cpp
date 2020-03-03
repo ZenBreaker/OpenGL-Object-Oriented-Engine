@@ -140,3 +140,23 @@ void Debug::drawWorldRects(const Rect3D &rect, float r, float g, float b, bool d
   data.b = b;
   queue.emplace_back(data);
 }
+
+void Debug::drawWorldSphere(glm::vec3 center, float radius, bool depthEnable)
+{
+  auto sphere = Engine::get().m_AssetManager.GetModel(ModelIndex::Sphere);
+
+  DrawData data;
+
+  data.points.reserve(sphere->m_Vertices.size());
+
+  for(unsigned i = 0; i < sphere->m_Vertices.size(); ++i)
+  {
+    data.points.emplace_back(sphere->m_Vertices[i] * radius + center);
+  }
+
+  data.elementIndex = sphere->m_Indices;
+
+  data.depthEnable = depthEnable;
+  data.fill = false;
+  queue.emplace_back(data);
+}

@@ -35,7 +35,7 @@ Object::Object(const char* name) :
   m_RotationVector(glm::vec3(0.0f, 1.0f, 0.0f)),
   m_RotationAngle(0.0f),
   m_RotationAmount(0.0f),
-  m_DrawBounds(true)
+  m_DrawAABB(true)
 {
 }
 
@@ -49,13 +49,18 @@ void Object::Update(float deltaTime)
 {
   m_RotationAngle += m_RotationAmount * deltaTime;
 
-  if (m_DrawBounds) {
-    auto bound = m_Model->Bounds(matrix4());
-    bound.Draw();
+  if (m_DrawAABB) 
+  {
+    m_Model->DrawAABBBounds(matrix4());
+  }
+
+  if(m_DrawBoundingSphere)
+  {
+    m_Model->DrawBoundingSphere(matrix4());
   }
 }
 
-void Object::SetShader(ShaderPtr shader)
+void Object::SetShader(const ShaderPtr& shader)
 {
   m_Shader = shader;
 

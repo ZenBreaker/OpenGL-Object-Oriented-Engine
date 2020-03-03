@@ -69,7 +69,7 @@ public:
   Object(const char* name = "");
   ~Object();
   void Update(float deltaTime);
-  void SetShader(ShaderPtr shader);
+  void SetShader(const ShaderPtr& shader);
   glm::mat4 matrix4() const;
   glm::mat4 normalMatrix() const;
 
@@ -94,7 +94,8 @@ public:
   GLint m_EyePositionUniform;
   GLint m_AmbiantColorUniform;
 
-  bool m_DrawBounds;
+  bool m_DrawAABB;
+  bool m_DrawBoundingSphere;
 private:
 };
 

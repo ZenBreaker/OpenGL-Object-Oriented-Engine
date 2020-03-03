@@ -83,21 +83,34 @@ void Model::SetZero()
   m_Indices.clear();
 }
 
-void Model::CalculateBounds(const glm::mat4 & modelToWorld)
+void Model::DrawAABBBounds(const glm::mat4 & modelToWorld)
 {
-  m_Bounds.Clear();
+  static std::vector<glm::vec3> temp;
+  temp.clear();
+  temp.reserve(m_Vertices.size());
 
-  for (glm::vec3 vertex : m_Vertices)
+  for (unsigned i = 0; i < m_Vertices.size(); ++i)
   {
-    m_Bounds.AddPoint(modelToWorld * glm::vec4(vertex,1));
+    temp.emplace_back(glm::vec3(modelToWorld * glm::vec4(m_Vertices[i], 1.0f)));
   }
+
+  m_AABBBounds.Update(temp);
+  m_AABBBounds.Draw();
 }
 
-AABB & Model::Bounds(const glm::mat4 & modelToWorld)
+void Model::DrawBoundingSphere(const glm::mat4& modelToWorld)
 {
-  CalculateBounds(modelToWorld);
+  static std::vector<glm::vec3> temp;
+  temp.clear();
+  temp.reserve(m_Vertices.size());
 
-  return m_Bounds;
+  for (unsigned i = 0; i < m_Vertices.size(); ++i)
+  {
+    temp.emplace_back(glm::vec3(modelToWorld * glm::vec4(m_Vertices[i], 1.0f)));
+  }
+
+  m_BoundingSphere.Update(temp);
+  m_BoundingSphere.Draw();
 }
 
 void Model::ParseModel(const char* filename)

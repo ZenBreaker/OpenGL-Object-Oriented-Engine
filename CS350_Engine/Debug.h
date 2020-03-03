@@ -70,7 +70,7 @@ public:
   void drawWorldLines(std::vector<Line> lines, bool depthEnabled);
   void drawScreenRects(std::vector<Rect2D> rects, bool depthEnable);
   void drawWorldRects(const Rect3D &rect, float r, float g, float b, bool depthEnable);
-  
+  void drawWorldSphere(glm::vec3 center, float radius, bool depthEnable);
 private:
   std::vector<DrawData> queue;
   GLuint m_VAO;

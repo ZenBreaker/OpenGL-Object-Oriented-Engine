@@ -41,32 +41,37 @@ glm::vec3 AABB::Size()
   return m_Max - m_Min;
 }
 
-void AABB::AddPoint(const glm::vec3 & point)
+void AABB::Update(const std::vector<glm::vec3>& points)
 {
-  if (point.x < m_Min.x)
-  {
-    m_Min.x = point.x;
-  }
-  else if (point.x > m_Max.x)
-  {
-    m_Max.x = point.x;
-  }
+  Clear();
 
-  if (point.y < m_Min.y)
+  for(unsigned i = 0; i < points.size(); ++i)
   {
-    m_Min.y = point.y;
-  }
-  else if (point.y > m_Max.y)
-  {
-    m_Max.y = point.y;
-  }
+    if (points[i].x < m_Min.x)
+    {
+      m_Min.x = points[i].x;
+    }
+    else if (points[i].x > m_Max.x)
+    {
+      m_Max.x = points[i].x;
+    }
 
-  if (point.z < m_Min.z)
-  {
-    m_Min.z = point.z;
-  }
-  else if (point.z > m_Max.z)
-  {
-    m_Max.z = point.z;
+    if (points[i].y < m_Min.y)
+    {
+      m_Min.y = points[i].y;
+    }
+    else if (points[i].y > m_Max.y)
+    {
+      m_Max.y = points[i].y;
+    }
+
+    if (points[i].z < m_Min.z)
+    {
+      m_Min.z = points[i].z;
+    }
+    else if (points[i].z > m_Max.z)
+    {
+      m_Max.z = points[i].z;
+    }
   }
 }

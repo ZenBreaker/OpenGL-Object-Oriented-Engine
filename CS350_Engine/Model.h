@@ -30,6 +30,7 @@ End Header --------------------------------------------------------*/
 #include <vector>
 
 #include "AABB.h"
+#include "BoundingSphere.h"
 
 enum ModelIndex
 {
@@ -87,16 +88,18 @@ public:
   GLuint m_DrawMode;
 
 
-  AABB& Bounds(const glm::mat4 & modelToWorld);
+  void DrawAABBBounds(const glm::mat4& modelToWorld);
+  void DrawBoundingSphere(const glm::mat4 & modelToWorld);
 
 private:
-  AABB m_Bounds;
+  AABB m_AABBBounds;
+  BoundingSphere m_BoundingSphere;
 
   void ParseModel(const char * filename);
   void GenerateBuffers();
   void CleanUp();
   void SetZero();
-  void CalculateBounds(const glm::mat4 & modelToWorld);
+
 };
 
 using ModelPtr = std::shared_ptr<Model>;
