@@ -1,7 +1,5 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Model.h
 Purpose: constructs models
 Language: C++ and Visual Studio 2017
@@ -32,6 +30,7 @@ End Header --------------------------------------------------------*/
 #include "AABB.h"
 #include "BoundingSphere.h"
 
+//! Model indices 
 enum ModelIndex
 {
   FourSphere,
@@ -49,6 +48,7 @@ enum ModelIndex
   Triangle,
 };
 
+//! Model string name
 static const char* const ModelNames[] =
 {
   "4Sphere",
@@ -66,38 +66,57 @@ static const char* const ModelNames[] =
   "triangle",
 };
 
+/**
+ * @brief 
+ *  Model class
+ */
 class Model
 {
 public:
+  // Default constructor for a new Model object
   Model(ModelIndex index = ModelIndex::Bunny);
+
   Model(const Model& rhs) = delete;
   Model(Model&& rhs) = delete;
+
+  // Destructure for the Model object
   ~Model();
+
+  // Move constructor for a Model object
   Model& operator=(Model&& rhs) noexcept;
 
-  ModelIndex m_ModelIndex;
-  std::vector<glm::vec3> m_Vertices;
-  std::vector<glm::vec3> m_VertexNormals;
-  std::vector<glm::uint> m_Indices;
-  std::vector<glm::vec3> m_FaceNormals;
-  std::vector<glm::vec3> m_FacesPosition;
-  GLuint m_VAO;
-  GLuint m_VBO;
-  GLuint m_VNBO;
-  GLuint m_EBO;
-  GLuint m_DrawMode;
-
-
+  // Debug Draw AABB 
   void DrawAABBBounds(const glm::mat4& modelToWorld);
+
+  // Debug Draw Bounding Sphere
   void DrawBoundingSphere(const glm::mat4 & modelToWorld);
+  
+  ModelIndex m_ModelIndex;                //!< index of the current model
+  std::vector<glm::vec3> m_Vertices;      //!< vector of vertices
+  std::vector<glm::vec3> m_VertexNormals; //!< vector of vertex normals
+  std::vector<glm::uint> m_Indices;       //!< vector of indices
+  std::vector<glm::vec3> m_FaceNormals;   //!< vector of face normals
+  std::vector<glm::vec3> m_FacesPosition; //!< vector of face positions
+  GLuint m_VAO;                           //!< vertex buffer object number
+  GLuint m_VBO;                           //!< (vertex) buffer number
+  GLuint m_VNBO;                          //!< (vertex normal) buffer number
+  GLuint m_EBO;                           //!< (indices) buffer number
+  GLuint m_DrawMode;                      //!< draw mode
 
 private:
-  AABB m_AABBBounds;
-  BoundingSphere m_BoundingSphere;
+  AABB m_AABBBounds;               //!< axis aligned bounding box for the model
+  BoundingSphere m_BoundingSphere; //!< bounding sphere for the model
 
+  // Model Parsing for ".obj"
   void ParseModel(const char * filename);
+
+  // Generate Buffers for the models for shader to use 
   void GenerateBuffers();
+
+  // Cleanup the model, destructing
   void CleanUp();
+
+  // Set member variables to zero
   void SetZero();
 
 };

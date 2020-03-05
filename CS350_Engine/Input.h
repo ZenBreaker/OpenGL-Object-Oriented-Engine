@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Input.h
 Purpose: manages input
-Language: C++ and Visual Studio 2017
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -26,16 +24,26 @@ End Header --------------------------------------------------------*/
 #include <glew-2.1.0/GL/glew.h>
 #include <glfw-3.3.bin.WIN64/GLFW/glfw3.h>
 
+/**
+ * @brief 
+ *  manages the input for the program
+ */
 class Input
 {
 public:
+  // Constructor a new Input object
   Input();
+
+  // initialize glfw window
   void Init(GLFWwindow * window);
+
+  // process input that isnt a callback
   void ProcessInput(float deltaTime);
-  bool m_FirstMouse;
-  GLFWwindow * m_Window;
-  float m_LastX;
-  float m_LastY;
+
+  bool m_FirstMouse;     //!< variable for clicking and draging
+  GLFWwindow * m_Window; //!< glfw window
+  float m_LastX;         //!< last mouse x position
+  float m_LastY;         //!< last mouse y position
 
 private:
 };

@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Editor.h
 Purpose: gui interface with dear imgui
-Language: C++ and Visual Studio 2017
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -25,15 +23,29 @@ End Header --------------------------------------------------------*/
 
 #include "Engine.h"
 
+/**
+ * @brief 
+ *   Editor manager
+ */
 class Editor
 {
 public:
+  // Constructor a new Editor object
   Editor();
 
+  // initialize Editor
   void Init(GLFWwindow*,const char*);
+
+  // shutdown editor
   void Shutdown();
+
+  // Pre Render of the editor
   void PreRender();
+
+  // Render of the editor
   void Render();
+
+  // Post Render for the editor
   void PostRender();
 
 private:

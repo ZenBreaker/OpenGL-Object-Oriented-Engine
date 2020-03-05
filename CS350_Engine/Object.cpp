@@ -1,7 +1,5 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Object.cpp
 Purpose: holds object data
 Language: C++ and Visual Studio 2017
@@ -54,7 +52,10 @@ void Object::Update(float deltaTime)
     m_Model->DrawAABBBounds(matrix4());
   }
 
-  if(m_DrawBoundingSphere)
+  // currently bounding spheres is not implamented
+  m_DrawBoundingSphere = false;
+  
+   if (m_DrawBoundingSphere)
   {
     m_Model->DrawBoundingSphere(matrix4());
   }

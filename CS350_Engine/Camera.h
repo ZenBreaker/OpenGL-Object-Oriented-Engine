@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Camera.h
 Purpose: handels camera functionality
-Language: C++ and Visual Studio 2017
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -25,6 +23,7 @@ End Header --------------------------------------------------------*/
 
 #include <glm/glm.hpp>
 
+//! Camera Directions
 enum Camera_Movement {
   FORWARD,
   BACKWARD,
@@ -32,26 +31,41 @@ enum Camera_Movement {
   RIGHT
 };
 
+/**
+ * @brief 
+ *   Camera class 
+ */
 class Camera
 {
 public:
+  // Constructor a new Camera object
   Camera();
+  // Destructure the Camera object
   ~Camera();
 
-  glm::vec3 m_Position;
-  glm::vec3 m_Foward;
-  glm::vec3 m_Up;
-  glm::vec3 m_Right;
-  float m_Speed;
-  float m_Yaw;
-  float m_Pitch;
-  float m_LastX;
-  float m_LastY;
-  float m_Sensitivity;
+  glm::vec3 m_Position; //!< camera's position vector
+  glm::vec3 m_Foward;   //!< camera's forward vector
+  glm::vec3 m_Up;       //!< camera's up vector
+  glm::vec3 m_Right;    //!< camera's right vector
+  float m_Speed;        //!< camera's current speed
+  float m_BaseSpeed;    //!< camera's base speed
+  bool m_TimeDependent; //!< camera's speed time dependent
+  float m_Yaw;          //!< camera's Euler yaw
+  float m_Pitch;        //!< camera's Euler pitch
+  float m_Sensitivity;  //!< camera's mouse sensitivity
+  float m_LastX;        //!< 
+  float m_LastY;        //!< 
 
+  // Update the position of the Camera
   void Update(Camera_Movement direction, float deltaTime);
+
+  // Taking mouse movement and update camera vectors
   void MouseMovement(float xoffset, float yoffset);
+
+  // Using Euler angles, calculate camera vectors
   void UpdateCameraVectors();
+
+  // calculate the view matrix
   glm::mat4 GetViewMatrix() const;
 };
 

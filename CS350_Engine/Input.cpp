@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Input.cpp
 Purpose: manages input
-Language: C++ and Visual Studio 2017
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -24,78 +22,154 @@ End Header --------------------------------------------------------*/
 #include "Input.h"
 #include "Engine.h"
 
-void MouseCallback(GLFWwindow* window, double xpos, double ypos);
-
+/**
+ * @brief 
+ *   Constructor a new Input object
+ */
 Input::Input()
 {
+  // set constructor member variables
   m_FirstMouse = false;
 }
 
+/**
+ * @brief 
+ *   initialize glfw window
+ * 
+ * @param window 
+ *   glfw window
+ */
 void Input::Init(GLFWwindow * window)
 {
+  // set window member variable
   m_Window = window;
+
   // Ensure we can capture the escape key being pressed below
   glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
   glfwSetInputMode(m_Window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 }
 
-void Input::ProcessInput(float deltaTime)
+/**
+ * @brief 
+ *   Callback if the mouse has moved
+ * 
+ * @param window 
+ *   glfw window that was callbacked from
+ * 
+ * @param xpos
+ *   new x position of the mouse
+ *  
+ * @param ypos 
+ *   new y position of the mouse
+ */
+void MouseCallback(GLFWwindow *window, double xpos, double ypos)
 {
-  auto& engine = Engine::get();
-
-  if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-  {
-    glfwSetWindowShouldClose(m_Window, true);
-  }
-
-  if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-  {
-    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-    GLFWcursorposfun oldCallback = glfwSetCursorPosCallback(m_Window, MouseCallback);
-
-    if (oldCallback == nullptr)
-    {
-      m_FirstMouse = true;
-    }
-  }
-  if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-  {
-    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    m_FirstMouse = false;
-    glfwSetCursorPosCallback(m_Window, nullptr);
-  }
-
-  if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
-    engine.m_SceneManager.m_CurrentScene->m_Camera.Update(FORWARD, deltaTime);
-  if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
-    engine.m_SceneManager.m_CurrentScene->m_Camera.Update(BACKWARD, deltaTime);
-  if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
-    engine.m_SceneManager.m_CurrentScene->m_Camera.Update(LEFT, deltaTime);
-  if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
-    engine.m_SceneManager.m_CurrentScene->m_Camera.Update(RIGHT, deltaTime);
-}
-
-void MouseCallback(GLFWwindow* window, double xpos, double ypos)
-{
+  // if clicking on imgui
   if (ImGui::GetIO().WantCaptureMouse)
   {
-    return;
+    return; // dont update
   }
 
-  auto& input = Engine::get().m_Input;
+  // get input
+  auto &input = Engine::get().m_Input;
+
+  // if its the first time for the application
   if (input.m_FirstMouse)
   {
+    // set the initial values
     input.m_LastX = (float)xpos;
     input.m_LastY = (float)ypos;
+
+    // never comeback inside
     input.m_FirstMouse = false;
   }
 
+  // calculate the difference in mouse movement
   float xoffset = (float)xpos - input.m_LastX;
   float yoffset = input.m_LastY - (float)ypos; // reversed since y-coordinates go from bottom to top
 
+  // update last positions
   input.m_LastX = (float)xpos;
   input.m_LastY = (float)ypos;
 
+  // update camera movements
   Engine::get().m_SceneManager.m_CurrentScene->m_Camera.MouseMovement(xoffset, yoffset);
 }
+
+/**
+ * @brief 
+ *   process input that isnt a callback
+ * 
+ * @param deltaTime 
+ *   delta time of the engine
+ */
+void Input::ProcessInput(float deltaTime)
+{
+  // get camera from the scene
+  auto &camera = Engine::get().m_SceneManager.m_CurrentScene->m_Camera;
+
+  // click and drag movement
+  {
+    // check if application close button was pressed
+    if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+      // call glfw window to shutdown
+      glfwSetWindowShouldClose(m_Window, true);
+    }
+
+    // check if application left mouse click was pressed
+    if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+      // remove the cursor from the screen
+      glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+      // call callback for cursor position
+      GLFWcursorposfun oldCallback = glfwSetCursorPosCallback(m_Window, MouseCallback);
+
+      // if old callback was not set
+      if (oldCallback == nullptr)
+      {
+        // set the first time for the mouse
+        m_FirstMouse = true;
+      }
+    }
+
+    // check if application left mouse click was released
+    if (glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    {
+      // give the cursor back to the user
+      glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+      // the mouse should be false for click and drag movement
+      m_FirstMouse = false;
+
+      // set cursor callback to false for click and drag movement
+      glfwSetCursorPosCallback(m_Window, nullptr);
+    }
+  }
+  
+  // check if the user what to move faster with shift, slower with control
+  if(glfwGetKey(m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+  {
+    camera.m_Speed = camera.m_BaseSpeed * 2.0f;
+  }
+  else if (glfwGetKey(m_Window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+  {
+    camera.m_Speed = camera.m_BaseSpeed / 2.0f;
+  }
+  else
+  {
+    camera.m_Speed = camera.m_BaseSpeed;
+  }
+
+  // check if user wants to move around with the camera
+  if (glfwGetKey(m_Window, GLFW_KEY_W) == GLFW_PRESS)
+    camera.Update(FORWARD, deltaTime);
+  if (glfwGetKey(m_Window, GLFW_KEY_S) == GLFW_PRESS)
+    camera.Update(BACKWARD, deltaTime);
+  if (glfwGetKey(m_Window, GLFW_KEY_A) == GLFW_PRESS)
+    camera.Update(LEFT, deltaTime);
+  if (glfwGetKey(m_Window, GLFW_KEY_D) == GLFW_PRESS)
+    camera.Update(RIGHT, deltaTime);
+}
+

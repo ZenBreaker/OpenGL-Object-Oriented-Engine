@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Engine.h
 Purpose: manages all the managers
-Language: C++ and Visual Studio 2017
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -29,32 +27,51 @@ End Header --------------------------------------------------------*/
 #include "Input.h"
 #include "Debug.h"
 
+/**
+ * @brief 
+ *   Engine class. The main loop of the project that manages the managers
+ */
 class Engine
 {
 public:
+  /**
+   * @brief 
+   *   
+   * 
+   * @return Engine& 
+   */
   static Engine& get();
 
+  // getter for the engine
   Engine();
 
+  // Initialize engine components
   void Init(int windowWidth, int windowHeight, const char* windowName, int& exitCode);
+
+  // shutdown the engine's components
   void Shutdown();
+
+  // engine's prerender
   void PreRender();
+
+  // engine's render
   void Render();
+
+  // engine's post render
   void PostRender();
 
-  GLFWwindow* m_Window;
-  int m_Width;
-  int m_Height;
-  bool m_IsRunning;
-  AssetManager m_AssetManager;
-  SceneManager m_SceneManager;
-  RenderingManager m_RenderingManager;
-  Input m_Input;
-  Debug m_Debug;
-
-  float m_TimeScale;
-  float m_DeltaTime;	// Time between current frame and last frame
-  float m_LastFrame; // Time of last frame
+  GLFWwindow* m_Window;                //!< glfw window
+  int m_Width;                         //!< width of the viewport
+  int m_Height;                        //!< height of the viewport
+  bool m_IsRunning;                    //!< should the engine shutdown
+  AssetManager m_AssetManager;         //!< asset manager
+  SceneManager m_SceneManager;         //!< scene manager
+  RenderingManager m_RenderingManager; //!< rendering manager
+  Input m_Input;                       //!< input manager
+  Debug m_Debug;                       //!< debug information manager 
+  float m_TimeScale;                   //!< Time scale of the engine
+  float m_DeltaTime;                   //!< Time between current frame and last frame
+  float m_LastFrame;                   //!< Time of last frame
 private:
 };
 

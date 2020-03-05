@@ -1,7 +1,5 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Object.h
 Purpose: holds object data
 Language: C++ and Visual Studio 2017
@@ -31,6 +29,7 @@ End Header --------------------------------------------------------*/
 #include "Model.h"
 #include "Shader.h"
 
+//! string version of the light types
 static const char* const LightTypeNames[] =
 {
   "Point",
@@ -38,36 +37,68 @@ static const char* const LightTypeNames[] =
   "Spotlight",
 };
 
+/**
+ * @brief 
+ *   Light struct
+ */
 struct Light
 {
-  glm::vec3 position;
-  float InnerAngle;
+  glm::vec3 position; //!< position
+  float InnerAngle;   //!< inner angle for spotlights
 
-  glm::vec3 direction;
-  float OuterAngle;
+  glm::vec3 direction; //!< direction
+  float OuterAngle;    //!< outer angle for spotlights
 
-  glm::vec3 diffuse;
-  float falloff;
+  glm::vec3 diffuse; //!< diffuse color
+  float falloff;     //!< distance falloff
 
-  glm::vec3 specular;
-  int type; // 0 point, 1 directional, 2 spot
+  glm::vec3 specular; //!< specular color
+  int type;           //!< 0 point, 1 directional, 2 spot
 
-  glm::vec3 ambiant;
-  int pad;
+  glm::vec3 ambiant; //!< ambiant color
+  int pad;           //!< extra padding
 };
 
+/**
+ * @brief 
+ *   Material struct
+ */
 struct Material
 {
 public:
-  GLfloat   specular_exponent;
-  glm::vec3 ambiant_color;
+  GLfloat   specular_exponent; //!< specular exponent 
+  glm::vec3 ambiant_color;     //!< ambiant color
 };
 
+/**
+ * @brief 
+ *   Object class
+ */
 class Object
 {
 public:
+  /**
+   * @brief 
+   *   Constructor of a new Object 
+   * 
+   * @param name 
+   *   Name of the Object
+   */
   Object(const char* name = "");
+
+  /**
+   * @brief 
+   *   Destructure of the Object 
+   */
   ~Object();
+
+  /**
+   * @brief 
+   *   
+   * 
+   * @param deltaTime 
+   *   delta time of the engine
+   */
   void Update(float deltaTime);
   void SetShader(const ShaderPtr& shader);
   glm::mat4 matrix4() const;

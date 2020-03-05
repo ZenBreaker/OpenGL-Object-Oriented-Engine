@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
 File Name: Engine.cpp
 Purpose: manages all the managers
-Language: C++ and Visual Studio 2017
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -24,22 +22,50 @@ End Header --------------------------------------------------------*/
 
 #include "Engine.h"
 
-static Engine* s_Engine = nullptr;
+static Engine* s_Engine = nullptr; //!< engine pointer
 
+/**
+ * @brief 
+ *   getter for the engine 
+ * 
+ * @return Engine& 
+ *   A reference of the engine
+ */
 Engine& Engine::get()
 {
   return *s_Engine;
 }
 
+/**
+ * @brief 
+ *   Constructor a new Engine object
+ */
 Engine::Engine() :
   m_Window(nullptr),
   m_IsRunning(true)
 {
-  s_Engine = this;
+  s_Engine = this; // set static pointer
 };
 
+/**
+ * @brief 
+ *   Initialize engine components
+ * 
+ * @param windowWidth 
+ *   engine starting width
+ * 
+ * @param windowHeight 
+ *   engine starting height
+ * 
+ * @param windowName 
+ *   engine starting name
+ * 
+ * @param exitCode 
+ *   exit error code if there was an error
+ */
 void Engine::Init(int windowWidth, int windowHeight, const char* windowName, int& exitCode)
 {
+  // settin member variables
   m_Width = windowWidth;
   m_Height = windowHeight;
   m_DeltaTime = 0.0f;
@@ -106,51 +132,86 @@ void Engine::Init(int windowWidth, int windowHeight, const char* windowName, int
   }
 }
 
+/**
+ * @brief 
+ *   shutdown the engine's components
+ */
 void Engine::Shutdown()
 {
+  // shutdown all managers
   m_SceneManager.Shutdown();
   m_RenderingManager.Shutdown();
   m_AssetManager.Shutdown();
 
+  // close glfw window
   glfwDestroyWindow(m_Window);
   glfwTerminate();
 }
 
+/**
+ * @brief 
+ *   engine's prerender 
+ */
 void Engine::PreRender()
 {
-  int width, height;
+  // poll glfw events
   glfwPollEvents();
+
+  // save window new width and height
+  int width, height;
   glfwGetWindowSize(m_Window, &width, &height);
+
+  //check if width or height is 0
   if (width == 0 || height == 0)
   {
+    // dont update the engine
     glfwSwapBuffers(m_Window);
     return;
   }
+
+  // resize viewport
   glViewport(0, 0, width, height);
   m_Width = width;
   m_Height = height;
+
+  // calculate delta time from last frame
   float currentFrame = (float)glfwGetTime();
   m_DeltaTime = currentFrame - m_LastFrame;
   m_LastFrame = currentFrame;
 
+  // process input
   m_Input.ProcessInput(m_DeltaTime * m_TimeScale);
   
+  // check if engine should close 
   if (glfwWindowShouldClose(m_Window))
   {
     m_IsRunning = false;
   }
 
+  // prerender all managers that need too
   m_RenderingManager.PreRender(m_SceneManager.m_CurrentScene);
 }
 
+/**
+ * @brief 
+ *   engine's render
+ */
 void Engine::Render()
 {
+  // render all managers that need too
   m_SceneManager.Update(m_DeltaTime * m_TimeScale);
   m_RenderingManager.Render(m_SceneManager.m_CurrentScene);
 }
 
+/**
+ * @brief 
+ *  engine's post render
+ */
 void Engine::PostRender()
 {
+  // post render all managers that need too
   m_RenderingManager.PostRender(m_SceneManager.m_CurrentScene);
+
+  // draw debug information
   m_Debug.Update();
 }

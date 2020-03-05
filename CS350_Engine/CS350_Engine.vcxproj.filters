@@ -149,10 +149,10 @@
     <ClInclude Include="Debug.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="AABB.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BoundingSphere.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

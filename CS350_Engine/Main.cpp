@@ -36,43 +36,58 @@ End Header --------------------------------------------------------*/
 #include "Engine.h"
 #include "Editor.h"
 
-int windowWidth = 1024;
-int windowHeight = 768;
-const char* glsl_version = "#version 130";
+int windowWidth = 1024;                    //!< default window width
+int windowHeight = 768;                    //!< default window height
+const char *glsl_version = "#version 130"; //!< default glsl version
 
 int main()
 {
-  int exitCode = 0;
+  int exitCode = 0; // exit code
+
+  // create engine 
   Engine engine;
+
+  // create editor
   Editor editor;
 
+  // initialize engine
   engine.Init(windowWidth, windowHeight, "CS350 - Engine - Michael Ngo", exitCode);
 
+  // check if glfw window was made
   if (!engine.m_Window)
   {
-    return exitCode;
+    return exitCode; // exit out of main
   }
 
+  // initialize editor
   editor.Init(engine.m_Window, glsl_version);
 
+  // start PRNG
   srand(unsigned(time(NULL)));
 
+  // keep looping wihle the engine is running
   while (engine.m_IsRunning)
   {
+    // PreRender
     engine.PreRender();
     editor.PreRender();
-    
+
+    // Render
     engine.Render();
     editor.Render();
 
+    // PostRender
     engine.PostRender();
     editor.PostRender();
 
+    // Swap glfw frame buffers
     glfwSwapBuffers(engine.m_Window);
   }
 
+  // shutdow editor then engine
   editor.Shutdown();
   engine.Shutdown();
 
+  // exit cleanly
   return 0;
 }

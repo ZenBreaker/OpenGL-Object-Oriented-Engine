@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-File Name: AssetManager.h
-Purpose: manage assets
-Language: C++ and Visual Studio 2017
+File Name: BoundingSphere.h
+Purpose: Bounding sphere for debug draw
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -20,6 +18,7 @@ Project: michael.ngo_CS350_1
 Author: Michael Ngo, michael.ngo, 90003217
 Creation date: 2/2/2020
 End Header --------------------------------------------------------*/
+
 #ifndef ASSETMANAGER_H
 #define ASSETMANAGER_H
 
@@ -28,23 +27,52 @@ End Header --------------------------------------------------------*/
 #include <map>
 #include <string>
 
+/**
+ * @brief 
+ *   Manages the assets
+ */
 class AssetManager
 {
 public:
+  // Constructor a new Asset Manager
   AssetManager();
+
+  // Deconstructor for the Asset Manager
   ~AssetManager() { Shutdown(); }
 
+  // Initialize any assets that should be created on start up
   void Init();
+
+  // Clean up any assets
   void Shutdown();
+
+  // Getter for the all models that can be loaded for the project
   ModelPtr GetModel(ModelIndex index);
+
+  // Getter for the all shaders that can be loaded for the project
   ShaderPtr GetShader(ShaderIndex index);
 
+  /**
+   * @brief 
+   *   Getter for the map of models that are loaded
+   * 
+   * @return const std::map<std::string, ModelPtr>& 
+   *   A const reference of the map of models
+   */
   const std::map<std::string, ModelPtr>& Models(void) const { return m_Models; };
+
+  /**
+   * @brief 
+   *   Getter for the map of shaders that are loaded
+   * 
+   * @return const std::map<std::string, ShaderPtr>& 
+   *   A const reference of the map of shaders
+   */
   const std::map<std::string, ShaderPtr>& Shaders(void) const { return m_Shaders; };
 
 private:
-  std::map<std::string, ModelPtr> m_Models;
-  std::map<std::string, ShaderPtr> m_Shaders;
+  std::map<std::string, ModelPtr> m_Models;   //!< Map of models
+  std::map<std::string, ShaderPtr> m_Shaders; //!< Map of shaders
 };
 
 #endif

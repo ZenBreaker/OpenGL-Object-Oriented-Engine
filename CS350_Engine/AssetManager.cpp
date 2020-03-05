@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-File Name: AssetManager.cpp
-Purpose: manage assets
-Language: C++ and Visual Studio 2017
+File Name: AssetManager.h
+Purpose: Manages the assets of the project. Currently Models and Shaders.
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -24,41 +22,81 @@ End Header --------------------------------------------------------*/
 #include "AssetManager.h"
 #include "Engine.h"
 
+/**
+ * @brief 
+ *   Constructor a new Asset Manager
+ */
 AssetManager::AssetManager()
 {
 }
 
+/**
+ * @brief 
+ *   Initialize any assets that should be created on start up
+ */
 void AssetManager::Init()
 {
 }
 
+/**
+ * @brief 
+ *   Clean up any assets
+ */
 void AssetManager::Shutdown()
 {
 }
 
+/**
+ * @brief 
+ *   Getter for the all models that can be loaded for the project 
+ * 
+ * @param index 
+ *   Index of what model to return
+ * 
+ * @return ModelPtr 
+ *   A shared pointer of the model so the call doesn't handle with the
+ *   destructor
+ */
 ModelPtr AssetManager::GetModel(ModelIndex index)
 {
-  if (m_Models.find(ModelNames[index]) == m_Models.end())
+  // checks if the model has already been loaded
+  if (m_Models.find(ModelNames[index]) == m_Models.end()) 
   {
-    m_Models.emplace(ModelNames[index], new Model(index));
+    m_Models.emplace(ModelNames[index], new Model(index)); // loads model
   }
   
-  return m_Models[ModelNames[index]];
+  return m_Models[ModelNames[index]]; // returns the model
 }
 
+/**
+ * @brief 
+ *   Getter for the all shaders that can be loaded for the project 
+ * 
+ * @param index 
+ *   Index of what shader to return
+ * 
+ * @return ShaderPtr 
+ *   A shared pointer of the shader so the call doesn't handle with the
+ *   destructor
+ */
 ShaderPtr AssetManager::GetShader(ShaderIndex index)
 {
+  // checks if the shader has already been loaded
   if (m_Shaders.find(ShaderNames[index]) == m_Shaders.end())
   {
-    m_Shaders.emplace(ShaderNames[index], new Shader(index));
+    m_Shaders.emplace(ShaderNames[index], new Shader(index)); // load shader
 
+    // temp block index and attach light data to the shader
     GLuint Local_block_index = 0;
     Local_block_index = glGetProgramResourceIndex(m_Shaders[ShaderNames[index]]->m_ProgramID, GL_SHADER_STORAGE_BLOCK, "LightData");
 
+    // attach ssbo to the shader
     GLuint ssbo_binding_point_index = 0;
     glShaderStorageBlockBinding(m_Shaders[ShaderNames[index]]->m_ProgramID, Local_block_index, ssbo_binding_point_index);
+
+    // save the SSBO uniform
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, ssbo_binding_point_index, Engine::get().m_RenderingManager.m_SSBOUniform);
   }
 
-  return m_Shaders[ShaderNames[index]];
+  return m_Shaders[ShaderNames[index]]; // returns the shader
 }
