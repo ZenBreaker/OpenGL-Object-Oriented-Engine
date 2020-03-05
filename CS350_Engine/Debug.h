@@ -1,3 +1,23 @@
+/* Start Header -------------------------------------------------------
+Copyright (C) 2020 DigiPen Institute of Technology.
+File Name: Debug.h
+Purpose: Debug Manager. Collects requests of debug calls and draws them at the end of a frame
+Language: C++ and Visual Studio 2019
+Platform:
+compiler version:
+  14.1 - 14.16
+hardware requirements:
+  1.8 GHz or faster processor. Dual-core or better recommended
+  2 GB of RAM; 4 GB of RAM recommended (2.5 GB minimum if running on a virtual machine)
+  Hard disk space: up to 130 GB of available space, depending on features installed; typical installations require 20-50 GB of free space.
+  Hard disk speed: to improve performance, install Windows and Visual Studio on a solid state drive (SSD).
+  Video card that supports a minimum display resolution of 720p (1280 by 720); Visual Studio will work best at a resolution of WXGA (1366 by 768) or higher.
+operating systems:
+  Windows 10 64bit
+Author: Michael Ngo, michael.ngo
+Creation date: 2/28/2020
+End Header --------------------------------------------------------*/
+
 #ifndef DEBUG_H
 #define DEBUG_H
 
@@ -29,62 +49,11 @@ public:
 
   /**
    * @brief 
-   *   point struct
-   */
-  struct Point
-  {
-    /**
-     * @brief 
-     *   Constructor a new Point object with 3 floats
-     * 
-     * @param x 
-     *   x position value
-     * 
-     * @param y 
-     *   y position value
-     * 
-     * @param z 
-     *   z position value
-     */
-    Point(float x, float y, float z) : x(x), y(y), z(z)
-    {
-    }
-
-    /**
-     * @brief 
-     *   Constructor a new Point object with a glm::vec3
-     * 
-     * @param point 
-     *   vec3 position vector
-     */
-    Point(const glm::vec3 & point) : x(point.x), y(point.y), z(point.z)
-    {
-    }
-
-    /**
-     * @brief 
-     *   default constructor a new Point object  
-     */
-    Point() : x(0), y(0), z(0)
-    {
-    }
-
-    float x; //!< x position value
-    float y; //!< y position value
-    float z; //!< z position value
-
-    float r; //!< r color value
-    float g; //!< g color value
-    float b; //!< b color value
-  };
-
-  /**
-   * @brief 
    *   line struct
    */
   struct Line
   {
-    Point point0, point1; // the two end points
+    glm::vec3 point0, point1; // the two end points
     float r, g, b;        // the color of the line
   };
 
@@ -94,7 +63,7 @@ public:
    */
   struct Rect2D
   {
-    Point topLeft; //!< top left position of the box
+    glm::vec3 topLeft; //!< top left position of the box
     float width;   //!< width of the boz
     float height;  //!< height of the box
   };
@@ -117,10 +86,16 @@ public:
      */
     ~Rect3D(){}
 
-    Point Center; //!< center of the rect
+    glm::vec3 Center; //!< center of the rect
     float width;  //!< width of the rect
     float height; //!< height of the rect
     float depth;  //!< depth of the rect
+  };
+
+  struct EBOData
+  {
+    int id;
+    GLuint size;
   };
 
   /**
@@ -129,15 +104,15 @@ public:
    */
   struct DrawData
   {
-    std::vector<Point> points;              //!< vertices
-    std::vector<unsigned int> elementIndex; //!< vertex indices
+    std::vector<glm::vec3> points;              //!< vertices
+    EBOData EBO;
     bool depthEnable;                       //!< depth enable
     bool fill;                              //!< fill 
     float r, g, b;                          //!< color value
   };
 
   // draw debug points
-  void drawPoints(std::vector<Point> points, bool depthEnabled);
+  void drawPoints(std::vector<glm::vec3> points, bool depthEnabled);
 
   // draw debug world lines
   void drawWorldLines(std::vector<Line> lines, bool depthEnabled);
@@ -152,11 +127,16 @@ public:
   void drawWorldSphere(glm::vec3 center, float radius, bool depthEnable);
 
 private:
-  std::vector<DrawData> queue;                                //!< queue of debug to draw
-  GLuint m_VAO;                                               //!< vao
-  GLuint m_VBO;                                               //!< vbo
-  GLuint m_EBO;                                               //!< ebo
-  GLuint m_ViewUniform, m_PerspectiveUniform, m_ModelUniform; //!< shader uniforms
+  std::vector<DrawData> m_Queue; //!< queue of debug objects to draw
+  GLuint m_VAO;                  //!< vao
+  GLuint m_VBO;                  //!< vbo
+  GLuint m_ViewUniform;          //!< View Uniform
+  GLuint m_PerspectiveUniform;   //!< Perspective Uniform
+  GLuint m_ModelUniform;         //!< Model Uniform
+
+
+  GLuint m_EBOStatic3DRect; //!< ebo of a 3d rect
+  GLuint m_EBOStaticSphere; //!< ebo of a sphere
 };
 
 #endif

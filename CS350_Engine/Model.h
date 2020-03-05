@@ -1,8 +1,8 @@
 /* Start Header -------------------------------------------------------
-Copyright (C) 2019 DigiPen Institute of Technology.
+Copyright (C) 2020 DigiPen Institute of Technology.
 File Name: Model.h
-Purpose: constructs models
-Language: C++ and Visual Studio 2017
+Purpose: Loads and Parses ".obj" files for models
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -14,10 +14,10 @@ hardware requirements:
   Video card that supports a minimum display resolution of 720p (1280 by 720); Visual Studio will work best at a resolution of WXGA (1366 by 768) or higher.
 operating systems:
   Windows 10 64bit
-Project: michael.ngo_CS350_1
-Author: Michael Ngo, michael.ngo, 90003217
+Author: Michael Ngo, michael.ngo
 Creation date: 2/2/2020
 End Header --------------------------------------------------------*/
+
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -30,7 +30,10 @@ End Header --------------------------------------------------------*/
 #include "AABB.h"
 #include "BoundingSphere.h"
 
-//! Model indices 
+/**
+ * @brief 
+ *  Model Indices Names
+ */
 enum ModelIndex
 {
   FourSphere,
@@ -48,7 +51,7 @@ enum ModelIndex
   Triangle,
 };
 
-//! Model string name
+// String version of Model Indices
 static const char* const ModelNames[] =
 {
   "4Sphere",

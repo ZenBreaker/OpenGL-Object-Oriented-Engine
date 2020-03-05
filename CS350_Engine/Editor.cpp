@@ -116,11 +116,11 @@ void Editor::PostRender()
     int currentindex = (int)Engine::get().m_RenderingManager.m_FSQ;
 
     // g bufer drop down menu
-    if (ImGui::BeginCombo("FSQ Name", FSQNames[currentindex]))
+    if (ImGui::BeginCombo("GeometryBuffer Name", GeometryBufferNames[currentindex]))
     {
-      for (std::size_t j = 0; j < sizeof(FSQNames) / sizeof(char *); ++j)
+      for (std::size_t j = 0; j < sizeof(GeometryBufferNames) / sizeof(char *); ++j)
       {
-        if (ImGui::Selectable(FSQNames[j], currentindex == j))
+        if (ImGui::Selectable(GeometryBufferNames[j], currentindex == j))
         {
           currentindex = (int)j;
           has_changed = true;
@@ -132,7 +132,7 @@ void Editor::PostRender()
     if (has_changed)
     {
       // update what g buffer to render
-      Engine::get().m_RenderingManager.m_FSQ = (FSQ)currentindex;
+      Engine::get().m_RenderingManager.m_FSQ = (GeometryBuffer)currentindex;
     }
   }
 

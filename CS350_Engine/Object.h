@@ -88,45 +88,69 @@ public:
 
   /**
    * @brief 
-   *   Destructure of the Object 
+   *   Destructure of the Object  
    */
   ~Object();
 
   /**
    * @brief 
-   *   
+   *   Defaults update for objects 
    * 
    * @param deltaTime 
    *   delta time of the engine
    */
   void Update(float deltaTime);
+
+  /**
+   * @brief 
+   *   Set the Shader of the object
+   * 
+   * @param shader 
+   *   what shader to set to
+   */
   void SetShader(const ShaderPtr& shader);
+
+  /**
+   * @brief 
+   *   Calculates the model to world martix
+   * 
+   * @return glm::mat4 
+   *   Model to world martix
+   */
   glm::mat4 matrix4() const;
+
+  /**
+   * @brief 
+   *   calcualting world normals matrix
+   * 
+   * @return glm::mat4 
+   *   world normal matrix
+   */
   glm::mat4 normalMatrix() const;
 
-  std::string m_Name;
-  ModelPtr m_Model;
-  ShaderPtr m_Shader;
+  std::string m_Name;               //!< Name 
+  ModelPtr m_Model;                 //!< Model
+  ShaderPtr m_Shader;               //!< Shader
 
-  glm::vec3 m_ScaleVector;
-  glm::vec3 m_Centroid;
-  glm::vec3 m_RotationVector;
+  glm::vec3 m_ScaleVector;          //!< Scaling Vector
+  glm::vec3 m_Centroid;             //!< Position 
+  glm::vec3 m_RotationVector;       //!< Vector to rotate about
 
-  GLfloat m_RotationAngle;
-  GLfloat m_RotationAmount;
+  GLfloat m_RotationAngle;          //!< how much the object has been rotated 
+  GLfloat m_RotationAmount;         //!< how to rotate the object per second
 
-  Material m_Material;
-  Light* m_Light;
+  Material m_Material;              //!< Material
+  Light *m_Light;                   //!< Pointer to a light if its a light
 
-  GLint m_PerspectiveMatrixUniform;
-  GLint m_ViewMatrixUniform;
-  GLint m_ModelMatrixUniform;
-  GLint m_NormalMatrixUniform;
-  GLint m_EyePositionUniform;
-  GLint m_AmbiantColorUniform;
+  GLint m_PerspectiveMatrixUniform; //!< Perspective Matrix Uniform
+  GLint m_ViewMatrixUniform;        //!< View Matrix Uniform
+  GLint m_ModelMatrixUniform;       //!< Model Matrix Uniform
+  GLint m_NormalMatrixUniform;      //!< Normal Matrix Uniform
+  GLint m_EyePositionUniform;       //!< Eye Position Uniform
 
-  bool m_DrawAABB;
-  bool m_DrawBoundingSphere;
+  GLint m_AmbiantColorUniform;      //!< Ambiant Color Uniform
+  bool m_DrawAABB;                  //!< Whether or not to draw AABB
+  bool m_DrawBoundingSphere;        //!< Whether or not to draw bounding spheres
 private:
 };
 

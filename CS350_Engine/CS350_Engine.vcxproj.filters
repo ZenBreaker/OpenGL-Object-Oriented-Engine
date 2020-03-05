@@ -216,12 +216,6 @@
     <None Include="DefaultShader.frag">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="GeometryShader.frag">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
-    <None Include="GeometryShader.vert">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
     <None Include="LightingPass.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
@@ -232,6 +226,12 @@
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="TextureShader.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="DeferredFirstPassShader.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="DeferredFirstPassShader.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>

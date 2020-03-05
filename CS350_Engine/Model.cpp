@@ -1,8 +1,8 @@
 /* Start Header -------------------------------------------------------
-Copyright (C) 2019 DigiPen Institute of Technology.
-File Name: Model.cpp
-Purpose: constructs models
-Language: C++ and Visual Studio 2017
+Copyright (C) 2020 DigiPen Institute of Technology.
+File Name: Model.h
+Purpose: Loads and Parses ".obj" files for models
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -14,10 +14,10 @@ hardware requirements:
   Video card that supports a minimum display resolution of 720p (1280 by 720); Visual Studio will work best at a resolution of WXGA (1366 by 768) or higher.
 operating systems:
   Windows 10 64bit
-Project: michael.ngo_CS350_1
-Author: Michael Ngo, michael.ngo, 90003217
+Author: Michael Ngo, michael.ngo
 Creation date: 2/2/2020
 End Header --------------------------------------------------------*/
+
 #include <glm/glm.hpp>
 
 #include <fstream>

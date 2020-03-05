@@ -32,7 +32,7 @@ enum ShaderIndex
   DefaultShader,
   LightShader,
   PhongShading,
-  GeometryShader,
+  DeferredFirstPassShader,
   LightingPass,
   TextureShader,
 };
@@ -42,7 +42,7 @@ static const char* const ShaderNames[] =
   "DefaultShader",
   "LightShader",
   "PhongShading",
-  "GeometryShader",
+  "DeferredFirstPassShader",
   "LightingPass",
   "TextureShader",
 };

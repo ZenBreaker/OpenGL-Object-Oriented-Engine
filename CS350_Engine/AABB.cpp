@@ -56,7 +56,7 @@ void AABB::Draw()
   rect.depth = size.z;
 
   // setting the position of the rect
-  rect.Center = Debug::Point(Center());
+  rect.Center = Center();
 
   // request to draw the rect
   Engine::get().m_Debug.drawWorldRects(rect, 1, 1, 1, true);

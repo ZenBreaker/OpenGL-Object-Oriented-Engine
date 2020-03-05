@@ -47,6 +47,8 @@ void Object::Update(float deltaTime)
 {
   m_RotationAngle += m_RotationAmount * deltaTime;
 
+  m_DrawAABB = false;
+
   if (m_DrawAABB) 
   {
     m_Model->DrawAABBBounds(matrix4());

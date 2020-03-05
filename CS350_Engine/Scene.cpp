@@ -42,7 +42,7 @@ Scene::Scene(SceneIndex number)
   {
     Object& object1 = AddObject();
     object1.m_Model = Engine::get().m_AssetManager.GetModel(ModelIndex::Bunny);
-    object1.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::GeometryShader));
+    object1.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object1.m_Centroid = glm::vec3(0.0f, 0.0f, 0.0f);
     object1.m_Material.ambiant_color = glm::vec3(1.0f, 0.0f, 1.0f);
 

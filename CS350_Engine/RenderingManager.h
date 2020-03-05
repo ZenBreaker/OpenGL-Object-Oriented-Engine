@@ -1,10 +1,8 @@
 /* Start Header -------------------------------------------------------
-Copyright (C) 2019 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
+Copyright (C) 2020 DigiPen Institute of Technology.
 File Name: RenderingManager.h
-Purpose: manages the renderer
-Language: C++ and Visual Studio 2017
+Purpose: Manages the rendering of objects. Uses Deferred Rendering
+Language: C++ and Visual Studio 2019
 Platform:
 compiler version:
   14.1 - 14.16
@@ -16,8 +14,7 @@ hardware requirements:
   Video card that supports a minimum display resolution of 720p (1280 by 720); Visual Studio will work best at a resolution of WXGA (1366 by 768) or higher.
 operating systems:
   Windows 10 64bit
-Project: michael.ngo_CS350_1
-Author: Michael Ngo, michael.ngo, 90003217
+Author: Michael Ngo
 Creation date: 2/2/2020
 End Header --------------------------------------------------------*/
 #ifndef RENDERINGMANAGER_H
@@ -26,7 +23,11 @@ End Header --------------------------------------------------------*/
 #include "Scene.h"
 #include "Object.h"
 
-enum FSQ
+/**
+ * @brief 
+ *  Geometry Buffer Names
+ */
+enum GeometryBuffer
 {
   All,
   Position,
@@ -34,7 +35,8 @@ enum FSQ
   AlbedoSpec,
 };
 
-static const char* const FSQNames[] =
+// String version of Geometry Buffer
+static const char* const GeometryBufferNames[] =
 {
   "All",
   "Position",
@@ -42,48 +44,127 @@ static const char* const FSQNames[] =
   "AlbedoSpec",
 };
 
+/**
+ * @brief 
+ *   Light Data struct
+ */
 struct LightData
 {
-  Light lights[16];
+  Light lights[16]; //!< array of lights that maxes out at 16 lights
 
-  int numberOfLights;
-  float constant;
-  float linear;
-  float quadratic;
+  int numberOfLights; //!< current number of lights 
+  float constant;     //!< constant light falloff
+  float linear;       //!< linear light falloff
+  float quadratic;    //!< quadratic light falloff
 
-  glm::vec3 GlobalAmbient;
-  float ZFar;
+  glm::vec3 GlobalAmbient; //!< color of the global ambiant
+  float ZFar;              //!< Z far distance
 
-  glm::vec3 Atmospheric;
-  float ZNear;
+  glm::vec3 Atmospheric; //!< not yet implemented
+  float ZNear;           //!< Z near distance
 
-  glm::vec4 IFog;
+  glm::vec4 IFog; //!< not yet implemented
 };
 
+/**
+ * @brief 
+ *   Rendering Manager, handles deferred Rendering 
+ */
 class RenderingManager
 {
 public:
+  /**
+   * @brief 
+   *   Default constructor for new Rendering Manager
+   */
   RenderingManager();
+
+  /**
+   * @brief 
+   *   Destructure for Rendering Manager
+   */
   ~RenderingManager() { Shutdown(); }
+
+  /**
+   * @brief 
+   *   initialize for the Rendering Manager
+   */
   void Init();
+
+  /**
+   * @brief 
+   *   Delete buffers
+   */
   void Shutdown();
+
+  /**
+   * @brief 
+   *   Pre Renders the scene, does first pass of deferred shading
+   * 
+   * @param scene 
+   *   Scene of which to draw
+   */
   void PreRender(const Scene* scene);
+
+  /**
+   * @brief 
+   *   Renders the scene, does the second pass of deferred shading
+   * 
+   * @param scene 
+   *   Scene of which to draw
+   */
   void Render(const Scene* scene);
+
+  /**
+   * @brief 
+   *   Renders the scene, renders forward objects, like light positions
+   * @param scene 
+   *   Scene of which to draw
+   */
   void PostRender(const Scene* scene);
 
-  GLuint m_SSBOUniform;
-  LightData m_Lights;
-  FSQ m_FSQ;
-  bool m_DepthCopy;
+  GLuint m_SSBOUniform; //!< SSBO uniform location
+  LightData m_Lights;   //!< light data 
+  GeometryBuffer m_FSQ; //!< what Geometry buffer to draw
+  bool m_DepthCopy;     //!< copy over depth
 
-  glm::mat4 m_Projection;
-  glm::mat4 m_View;
+  glm::mat4 m_Projection; //!< projection matrix
+  glm::mat4 m_View;       //!< view matrix 
+
+  GLuint m_FullQuadVAO = 0; //!< screen quad VAO
+  GLuint m_FullQuadVBO;     //!< screen quad VBO
+
 private:
-  void RenderObject(const Scene* scene, const Object& object);
+  /**
+   * @brief 
+   *   Render a single object into the current framebuffer
+   * 
+   * @param scene 
+   *   Current Scene to draw from
+   * 
+   * @param object
+   *   Current object to draw
+   *  
+   * @param lastBindedProgramID
+   *   last program id that was drawn from, for optimization 
+   */
+  void RenderObject(const Scene* scene, const Object& object, GLuint& lastBindedProgramID);
+  
+  /**
+   * @brief 
+   *   Render a full screen quad
+   */
+  void RenderQuad() const;
 
-  glm::vec4 m_Eye;
-  unsigned int gBuffer, gPosition, gNormal, gAlbedoSpec, rboDepth;
-  GLuint m_gPositionUniform, m_gNormalUniform, m_gAlbedoSpecUniform;
+  glm::vec4 m_Eye;                    //!< eye's position to render from
+  GLuint m_GeometryBuffer;            //!< geomrtry framebuffer
+  GLuint m_GeometryPosition;          //!< position texture
+  GLuint m_GeometryNormal;            //!< normal texture
+  GLuint m_GeometryAlbedoSpec;        //!< color texture
+  GLuint m_RenderBufferObjectDepth;   //!< render buffer object for depth 
+  GLuint m_GeometryPositionUniform;   //!< position uniform location
+  GLuint m_GeometryNormalUniform;     //!< normal uniform location
+  GLuint m_GeometryAlbedoSpecUniform; //!< color uniform location
 };
 
 #endif
