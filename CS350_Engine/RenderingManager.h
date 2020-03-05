@@ -73,54 +73,28 @@ struct LightData
 class RenderingManager
 {
 public:
-  /**
-   * @brief 
-   *   Default constructor for new Rendering Manager
-   */
+  // Default constructor for new Rendering Manager
   RenderingManager();
 
   /**
-   * @brief 
+   * @brief
    *   Destructure for Rendering Manager
    */
   ~RenderingManager() { Shutdown(); }
 
-  /**
-   * @brief 
-   *   initialize for the Rendering Manager
-   */
+  // initialize for the Rendering Manager
   void Init();
 
-  /**
-   * @brief 
-   *   Delete buffers
-   */
+  // Delete buffers
   void Shutdown();
 
-  /**
-   * @brief 
-   *   Pre Renders the scene, does first pass of deferred shading
-   * 
-   * @param scene 
-   *   Scene of which to draw
-   */
+  // Pre Renders the scene, does first pass of deferred shading
   void PreRender(const Scene* scene);
 
-  /**
-   * @brief 
-   *   Renders the scene, does the second pass of deferred shading
-   * 
-   * @param scene 
-   *   Scene of which to draw
-   */
+  // Renders the scene, does the second pass of deferred shading
   void Render(const Scene* scene);
 
-  /**
-   * @brief 
-   *   Renders the scene, renders forward objects, like light positions
-   * @param scene 
-   *   Scene of which to draw
-   */
+  // Renders the scene, renders forward objects, like light positions
   void PostRender(const Scene* scene);
 
   GLuint m_SSBOUniform; //!< SSBO uniform location
@@ -131,40 +105,27 @@ public:
   glm::mat4 m_Projection; //!< projection matrix
   glm::mat4 m_View;       //!< view matrix 
 
-  GLuint m_FullQuadVAO = 0; //!< screen quad VAO
-  GLuint m_FullQuadVBO;     //!< screen quad VBO
-
 private:
-  /**
-   * @brief 
-   *   Render a single object into the current framebuffer
-   * 
-   * @param scene 
-   *   Current Scene to draw from
-   * 
-   * @param object
-   *   Current object to draw
-   *  
-   * @param lastBindedProgramID
-   *   last program id that was drawn from, for optimization 
-   */
+  // Render a single object into the current framebuffer
   void RenderObject(const Scene* scene, const Object& object, GLuint& lastBindedProgramID);
   
-  /**
-   * @brief 
-   *   Render a full screen quad
-   */
+  // Render a full screen quad
   void RenderQuad() const;
 
-  glm::vec4 m_Eye;                    //!< eye's position to render from
-  GLuint m_GeometryBuffer;            //!< geomrtry framebuffer
-  GLuint m_GeometryPosition;          //!< position texture
-  GLuint m_GeometryNormal;            //!< normal texture
-  GLuint m_GeometryAlbedoSpec;        //!< color texture
-  GLuint m_RenderBufferObjectDepth;   //!< render buffer object for depth 
+  glm::vec4 m_Eye; //!< eye's position to render from
+
+  GLuint m_GeometryBuffer;          //!< geometry framebuffer
+  GLuint m_GeometryPosition;        //!< position texture
+  GLuint m_GeometryNormal;          //!< normal texture
+  GLuint m_GeometryAlbedoSpec;      //!< color texture
+  GLuint m_RenderBufferObjectDepth; //!< render buffer object for depth
+
   GLuint m_GeometryPositionUniform;   //!< position uniform location
   GLuint m_GeometryNormalUniform;     //!< normal uniform location
   GLuint m_GeometryAlbedoSpecUniform; //!< color uniform location
+
+  GLuint m_FullQuadVAO = 0; //!< screen quad VAO
+  GLuint m_FullQuadVBO;     //!< screen quad VBO
 };
 
 #endif

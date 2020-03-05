@@ -44,10 +44,18 @@ const float quadVertices[] = {
    1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
 };
 
+/**
+ * @brief
+ *   Default constructor for new Rendering Manager
+ */
 RenderingManager::RenderingManager()
 {
 }
 
+/**
+ * @brief
+ *   initialize for the Rendering Manager
+ */
 void RenderingManager::Init()
 {
   // initialized member variables 
@@ -132,14 +140,29 @@ void RenderingManager::Init()
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 }
 
+/**
+ * @brief
+ *   Delete buffers
+ */
 void RenderingManager::Shutdown()
 {
-  // delete all buffers
+  // delete all gl buffers
   glDeleteBuffers(1, &m_FullQuadVBO);
   glDeleteBuffers(1, &m_SSBOUniform);
   glDeleteVertexArrays(1, &m_FullQuadVAO);
+  glDeleteTextures(1, &m_GeometryPosition);
+  glDeleteTextures(1, &m_GeometryNormal);
+  glDeleteTextures(1, &m_GeometryAlbedoSpec);
+  glDeleteRenderbuffers(1, &m_RenderBufferObjectDepth);
 }
 
+/**
+ * @brief
+ *   Pre Renders the scene, does first pass of deferred shading
+ *
+ * @param scene
+ *   Scene of which to draw
+ */
 void RenderingManager::PreRender(const Scene* scene)
 {
   // clear framebuffer
@@ -173,6 +196,13 @@ void RenderingManager::PreRender(const Scene* scene)
   glViewport(0, 0, Engine::get().m_Width, Engine::get().m_Height);
 }
 
+/**
+ * @brief
+ *   Renders the scene, does the second pass of deferred shading
+ *
+ * @param scene
+ *   Scene of which to draw
+ */
 void RenderingManager::Render(const Scene* scene)
 {
   // clear color
@@ -253,6 +283,13 @@ void RenderingManager::Render(const Scene* scene)
   RenderQuad();
 }
 
+/**
+ * @brief
+ *   Renders the scene, renders forward objects, like light positions
+ *
+ * @param scene
+ *   Scene of which to draw
+ */
 void RenderingManager::PostRender(const Scene* scene)
 {
   // if using depth copy
@@ -278,6 +315,19 @@ void RenderingManager::PostRender(const Scene* scene)
   }
 }
 
+/**
+ * @brief
+ *   Render a single object into the current framebuffer
+ *
+ * @param scene
+ *   Current Scene to draw from
+ *
+ * @param object
+ *   Current object to draw
+ *
+ * @param lastBindedProgramID
+ *   last program id that was drawn from, for optimization
+ */
 void RenderingManager::RenderObject(const Scene* scene, const Object& object, GLuint & lastBindedProgramID)
 {
   // check if last program id is the same as the current id
@@ -333,6 +383,10 @@ void RenderingManager::RenderObject(const Scene* scene, const Object& object, GL
   glDisableVertexAttribArray(1);
 }
 
+/**
+ * @brief
+ *   Render a full screen quad
+ */
 void RenderingManager::RenderQuad() const 
 {
   // disable depth

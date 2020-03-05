@@ -46,7 +46,7 @@ AABB::~AABB()
  */
 void AABB::Draw()
 {
-  Debug::Rect3D rect; // temp rect for debug draw
+  Rect3D rect; // temp rect for debug draw
 
   const glm::vec3 size = Size(); //getting the size of the bounding box
 

@@ -44,11 +44,8 @@ enum ModelIndex
   Cup,
   LucyPrinceton,
   Quad,
-  Rhino,
   Sphere,
   SphereModified,
-  StarWarsOne,
-  Triangle,
 };
 
 // String version of Model Indices
@@ -62,11 +59,8 @@ static const char* const ModelNames[] =
   "cup",
   "lucy_princeton",
   "quad",
-  "rhino",
   "sphere",
   "sphere_modified",
-  "starwars1",
-  "triangle",
 };
 
 /**
@@ -107,9 +101,6 @@ public:
   GLuint m_DrawMode;                      //!< draw mode
 
 private:
-  AABB m_AABBBounds;               //!< axis aligned bounding box for the model
-  BoundingSphere m_BoundingSphere; //!< bounding sphere for the model
-
   // Model Parsing for ".obj"
   void ParseModel(const char * filename);
 
@@ -122,6 +113,8 @@ private:
   // Set member variables to zero
   void SetZero();
 
+  AABB m_AABBBounds;               //!< axis aligned bounding box for the model
+  BoundingSphere m_BoundingSphere; //!< bounding sphere for the model
 };
 
 using ModelPtr = std::shared_ptr<Model>;

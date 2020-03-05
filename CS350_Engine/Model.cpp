@@ -28,12 +28,12 @@ End Header --------------------------------------------------------*/
 #include "Model.h"
 
 /**
-   * @brief 
-   *   Default constructor for a new Model object
-   * 
-   * @param index 
-   *   Index of model to create
-   */
+ * @brief 
+ *   Default constructor for a new Model object
+ * 
+ * @param index 
+ *   Index of model to create
+ */
 Model::Model(ModelIndex index)
 {
   m_ModelIndex = index;
@@ -44,24 +44,24 @@ Model::Model(ModelIndex index)
 }
 
 /**
-   * @brief 
-   *   Destructure for the Model object
-   */
+ * @brief 
+ *   Destructure for the Model object
+ */
 Model::~Model()
 {
   CleanUp();
 }
 
 /**
-   * @brief 
-   *   Move constructor for a Model object
-   * 
-   * @param rhs 
-   *   Model to copy over
-   * 
-   * @return Model&
-   *   Model reference
-   */
+ * @brief 
+ *   Move constructor for a Model object
+ * 
+ * @param rhs 
+ *   Model to copy over
+ * 
+ * @return Model&
+ *   Model reference
+ */
 Model& Model::operator=(Model&& rhs) noexcept
 {
   CleanUp();

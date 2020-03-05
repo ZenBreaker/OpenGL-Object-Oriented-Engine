@@ -29,6 +29,74 @@ End Header --------------------------------------------------------*/
 #include <vector>
 
 /**
+ * @brief
+ *   line struct
+ */
+struct Line
+{
+  glm::vec3 point0, point1; // the two end points
+  float r, g, b;        // the color of the line
+};
+
+/**
+ * @brief
+ *   rect 2d struct
+ */
+struct Rect2D
+{
+  glm::vec3 topLeft; //!< top left position of the box
+  float width;   //!< width of the boz
+  float height;  //!< height of the box
+};
+
+/**
+ * @brief
+ *  rect 3d struct
+ */
+struct Rect3D
+{
+  /**
+   * @brief
+   *   default constructor a new Rect 3 D object
+   */
+  Rect3D() : width(1), height(1), depth(1), Center() {}
+
+  /**
+   * @brief
+   *   Destructer the Rect 3D object
+   */
+  ~Rect3D() {}
+
+  glm::vec3 Center; //!< center of the rect
+  float width;  //!< width of the rect
+  float height; //!< height of the rect
+  float depth;  //!< depth of the rect
+};
+
+/**
+ * @brief
+ *   EBO Data for debug index binding optimizations
+ */
+struct EBOData
+{
+  int id;
+  GLuint size;
+};
+
+/**
+ * @brief
+ *   draw data struct
+ */
+struct DrawData
+{
+  std::vector<glm::vec3> points; //!< vertices
+  EBOData EBO;                   //!< EBO Data        
+  bool depthEnable;              //!< depth enable
+  bool fill;                     //!< fill 
+  float r, g, b;                 //!< color value
+};
+
+/**
  * @brief 
  *   Debug manager for queued debug draw
  */
@@ -47,70 +115,6 @@ public:
   // draw all queued debug calls
   void Update();
 
-  /**
-   * @brief 
-   *   line struct
-   */
-  struct Line
-  {
-    glm::vec3 point0, point1; // the two end points
-    float r, g, b;        // the color of the line
-  };
-
-  /**
-   * @brief 
-   *   rect 2d struct
-   */
-  struct Rect2D
-  {
-    glm::vec3 topLeft; //!< top left position of the box
-    float width;   //!< width of the boz
-    float height;  //!< height of the box
-  };
-
-  /**
-   * @brief 
-   *  rect 3d struct
-   */
-  struct Rect3D
-  {
-    /**
-     * @brief 
-     *   default constructor a new Rect 3 D object
-     */
-    Rect3D() : width(1), height(1), depth(1), Center() {}
-
-    /**
-     * @brief 
-     *   Destructer the Rect 3D object
-     */
-    ~Rect3D(){}
-
-    glm::vec3 Center; //!< center of the rect
-    float width;  //!< width of the rect
-    float height; //!< height of the rect
-    float depth;  //!< depth of the rect
-  };
-
-  struct EBOData
-  {
-    int id;
-    GLuint size;
-  };
-
-  /**
-   * @brief 
-   *   draw data struct
-   */
-  struct DrawData
-  {
-    std::vector<glm::vec3> points;              //!< vertices
-    EBOData EBO;
-    bool depthEnable;                       //!< depth enable
-    bool fill;                              //!< fill 
-    float r, g, b;                          //!< color value
-  };
-
   // draw debug points
   void drawPoints(std::vector<glm::vec3> points, bool depthEnabled);
 
@@ -128,11 +132,12 @@ public:
 
 private:
   std::vector<DrawData> m_Queue; //!< queue of debug objects to draw
-  GLuint m_VAO;                  //!< vao
-  GLuint m_VBO;                  //!< vbo
-  GLuint m_ViewUniform;          //!< View Uniform
-  GLuint m_PerspectiveUniform;   //!< Perspective Uniform
-  GLuint m_ModelUniform;         //!< Model Uniform
+
+  GLuint m_VAO;                //!< vao
+  GLuint m_VBO;                //!< vbo
+  GLuint m_ViewUniform;        //!< View Uniform
+  GLuint m_PerspectiveUniform; //!< Perspective Uniform
+  GLuint m_ModelUniform;       //!< Model Uniform
 
 
   GLuint m_EBOStatic3DRect; //!< ebo of a 3d rect

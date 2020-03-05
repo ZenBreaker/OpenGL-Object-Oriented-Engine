@@ -116,7 +116,7 @@ void Editor::PostRender()
     int currentindex = (int)Engine::get().m_RenderingManager.m_FSQ;
 
     // g bufer drop down menu
-    if (ImGui::BeginCombo("GeometryBuffer Name", GeometryBufferNames[currentindex]))
+    if (ImGui::BeginCombo("Geometry Buffer Name", GeometryBufferNames[currentindex]))
     {
       for (std::size_t j = 0; j < sizeof(GeometryBufferNames) / sizeof(char *); ++j)
       {
@@ -446,9 +446,11 @@ void Editor::PostRender()
           if (ImGui::Checkbox("Draw AABB Bounds", &object.m_DrawAABB))
           {
           }
+          /*
           if (ImGui::Checkbox("Draw Bounding Sphere", &object.m_DrawBoundingSphere))
           {
           }
+          */
         }
         
         ImGui::TreePop();
