@@ -168,7 +168,7 @@ void Editor::PostRender()
           int currentindex = (int)light.m_Model->m_ModelIndex;
           if (ImGui::BeginCombo("Model Name", Model::IndexNames[currentindex].c_str()))
           {
-            for (std::size_t j = 0; j < sizeof(Model::IndexNames) / sizeof(char *); ++j)
+            for (std::size_t j = 0; j < Model::IndexNames.size(); ++j)
             {
               if (ImGui::Selectable(Model::IndexNames[j].c_str(), currentindex == j))
               {
@@ -367,7 +367,7 @@ void Editor::PostRender()
           int currentindex = (int)object.m_Model->m_ModelIndex;
           if (ImGui::BeginCombo("Model Name", Model::IndexNames[currentindex].c_str()))
           {
-            for (std::size_t j = 0; j < sizeof(Model::IndexNames) / sizeof(char *); ++j)
+            for (std::size_t j = 0; j < Model::IndexNames.size(); ++j)
             {
               if (ImGui::Selectable(Model::IndexNames[j].c_str(), currentindex == j))
               {
@@ -413,7 +413,7 @@ void Editor::PostRender()
         {
           if (ImGui::DragFloat("Scale Vector", &object.m_ScaleVector.x))
           {
-            glm::vec3 scale(object.m_ScaleVector);
+            glm::vec3& scale(object.m_ScaleVector);
             scale.y = scale.x;
             scale.z = scale.x;
           }

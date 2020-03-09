@@ -21,6 +21,9 @@ End Header --------------------------------------------------------*/
 
 #include "BoundingSphere.h"
 
+#include <algorithm>
+
+
 #include "Engine.h"
 
 std::vector<std::string> BoundingSphere::TypeNames
@@ -84,8 +87,6 @@ BoundingSphere::Type BoundingSphere::SetBoundingType(BoundingSphere::Type type)
 {
   if(m_Type != type)
   {
-    Clear();
-
     m_Type = type;
   }
 
@@ -163,14 +164,14 @@ void BoundingSphere::CentroidMethod(const std::vector<glm::vec3>& vertices)
   m_Center /= (float)vertices.size();
 
   for (unsigned int i = 0; i < vertices.size(); ++i)
-  { 
-    const float euclidenDistance = distance(m_Center, vertices[i]);
-
-    if(m_Radius < euclidenDistance)
-    {
-      m_Radius = euclidenDistance;
-    }
+  {
+    const float dx = m_Center.x - vertices[i].x;
+    const float dy = m_Center.y - vertices[i].y;
+    const float dz = m_Center.z - vertices[i].z;
+    m_Radius = std::max(dx * dx + dy * dy + dz * dz, m_Radius);
   }
+
+  m_Radius = sqrtf(m_Radius) * 2.0f;
 }
 
 /**

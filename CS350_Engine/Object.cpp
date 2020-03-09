@@ -28,12 +28,13 @@ Object::Object(const char* name) :
   m_Name(name),
   m_Model(nullptr),
   m_Shader(nullptr),
-  m_Centroid(glm::vec3(0.0f)),
+  m_Centroid({0.0f}),
   m_ScaleVector(glm::vec3(1.0f)),
   m_RotationVector(glm::vec3(0.0f, 1.0f, 0.0f)),
   m_RotationAngle(0.0f),
   m_RotationAmount(0.0f),
-  m_DrawAABB(true)
+  m_DrawAABB(false),
+  m_DrawBoundingSphere(true)
 {
 }
 
@@ -52,8 +53,6 @@ void Object::Update(float deltaTime)
     m_AABB.Update(matrix4(), m_Model->m_Vertices);
     m_AABB.Draw({1,1,1});
   }
-
-  m_DrawBoundingSphere = false;
 
   if (m_DrawBoundingSphere)
   {

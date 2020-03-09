@@ -74,17 +74,19 @@ public:
   // Move constructor for a Model object
   Model& operator=(Model&& rhs) noexcept;
   
-  Index m_ModelIndex;                //!< index of the current model
+  Index m_ModelIndex; //!< index of the current model
+
   std::vector<glm::vec3> m_Vertices;      //!< vector of vertices
   std::vector<glm::vec3> m_VertexNormals; //!< vector of vertex normals
   std::vector<glm::uint> m_Indices;       //!< vector of indices
   std::vector<glm::vec3> m_FaceNormals;   //!< vector of face normals
   std::vector<glm::vec3> m_FacesPosition; //!< vector of face positions
-  GLuint m_VAO;                           //!< vertex buffer object number
-  GLuint m_VBO;                           //!< (vertex) buffer number
-  GLuint m_VNBO;                          //!< (vertex normal) buffer number
-  GLuint m_EBO;                           //!< (indices) buffer number
-  GLuint m_DrawMode;                      //!< draw mode
+
+  GLuint m_VAO;      //!< vertex buffer object number
+  GLuint m_VBO;      //!< (vertex) buffer number
+  GLuint m_VNBO;     //!< (vertex normal) buffer number
+  GLuint m_EBO;      //!< (indices) buffer number
+  GLuint m_DrawMode; //!< draw mode
 
 
 private:

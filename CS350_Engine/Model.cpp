@@ -140,10 +140,8 @@ void Model::ParseModel(const char* filename)
   std::ifstream infile(filename); // open the file
   std::string line;               // string to hold each line of the file
 
-  glm::vec3 offset(0); // average offset of the model from (0,0,0)
-
-  glm::vec3 max(std::numeric_limits<float>::min()); // max point of the model
-  glm::vec3 min(std::numeric_limits<float>::max()); // min point of the model
+  glm::vec3 max(-INFINITY); // max point of the model
+  glm::vec3 min(INFINITY); // min point of the model
   std::vector<std::pair<int, int>> VertexNormal;    // Vertex normal map to count references
 
   if (infile.is_open()) // if the file did not open
@@ -169,9 +167,6 @@ void Model::ParseModel(const char* filename)
 
           // push back the vertex 
           m_Vertices.emplace_back(x, y, z);
-
-          // add to offset
-          offset += m_Vertices.back();
 
           // check if point is a max point
           if (max.x < m_Vertices.back().x) 
@@ -254,22 +249,22 @@ void Model::ParseModel(const char* filename)
     }
   }
 
-  // calcuate the vertices from avrage 
-  offset /= m_Vertices.size();
-  
   // find the range of the model
-  float rangex = max.x - min.x;
-  float rangey = max.y - min.y;
-  float rangez = max.z - min.z;
+  const float rangex = max.x - min.x;
+  const float rangey = max.y - min.y;
+  const float rangez = max.z - min.z;
 
-  // find the longest side
-  float rangemax(std::max(std::max(rangex, rangey), rangez));
+  const float maxRange = std::max(std::max(rangex, rangey), rangez);
+
+  // find the center
+  const glm::vec3 totalSize{ maxRange };
+  const glm::vec3 center{ (min + max) / 2.0f };
 
   // loop all the vertices, covert to ndc and center the vertices around the model equally
   for (glm::vec3& vertex : m_Vertices)
   {
-    vertex -= offset;
-    vertex /= rangemax;
+    vertex -= center;
+    vertex /= totalSize;
   }
 
   // manually calculate the vertex normals
