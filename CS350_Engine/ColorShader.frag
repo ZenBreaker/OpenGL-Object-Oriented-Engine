@@ -1,8 +1,8 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-File Name: AABB.h
-Purpose: Axis Alinged Bounding Boxes for Debug purposes 
-Language: C++ and Visual Studio 2019
+File Name: DefaultShader.frag
+Purpose: Default shading if no shader was appiled
+Language: C++ and Visual Studio 2017
 Platform:
 compiler version:
   14.1 - 14.16
@@ -16,47 +16,16 @@ operating systems:
   Windows 10 64bit
 Project: michael.ngo_CS350_1
 Author: Michael Ngo, michael.ngo, 90003217
-Creation date: 2/28/2020
+Creation date: 2/2/2020
 End Header --------------------------------------------------------*/
 
-#ifndef AABB_H
-#define AABB_H
+#version 430 core
 
-#include <glm/glm.hpp> /* vec3   */
-#include <vector>      /* vector */
+in vec3 color;
 
-/**
- * @brief Axis Alinged Bounding Boxes Structure
- *   
- */
-class AABB
+out vec4 FragColor;
+
+void main()
 {
-public:
-  // Constructor a new AABB object
-  AABB();
-
-  // Destructure the AABB object
-  ~AABB();
-
-  // Draws the debug AABB information
-  void Draw();
-
-  // Clears the AABB information
-  void Clear();
-
-  // Returns the center of the AABB Object
-  glm::vec3 Center();
-
-  // Returns the size of the AABB Object
-  glm::vec3 Size();
-
-  // Calculates the bounding volume of the points
-  void Update(const std::vector<glm::vec3> & points);
-  
-private:
-
-  glm::vec3 m_Max; //!< The maximum point of the points
-  glm::vec3 m_Min; //!< The minimum point of the points
-};
-
-#endif
+  FragColor = vec4(color, 1);
+}

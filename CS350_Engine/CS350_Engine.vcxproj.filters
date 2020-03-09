@@ -81,10 +81,13 @@
     <ClCompile Include="Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AABB.cpp">
+    <ClCompile Include="BoundingSphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoundingSphere.cpp">
+    <ClCompile Include="BoundingHierarchy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AxisAlingedBoundingBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,7 +155,10 @@
     <ClInclude Include="BoundingSphere.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="AABB.h">
+    <ClInclude Include="BoundingHierarchy.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AxisAlingedBoundingBox.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -232,6 +238,12 @@
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="DeferredFirstPassShader.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="ColorShader.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="ColorShader.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>

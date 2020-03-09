@@ -23,6 +23,15 @@ End Header --------------------------------------------------------*/
 
 #include "Engine.h"
 
+std::vector<std::string> BoundingSphere::TypeNames
+{
+  "Centroid",
+  "Ritters",
+  "Larssons",
+  "PCA",
+};
+
+
 /**
  * @brief 
  *   Constructor a new Bounding Sphere object
@@ -68,10 +77,10 @@ void BoundingSphere::Clear()
  * @param type 
  *   Calculating type method
  * 
- * @return BoundingType 
+ * @return Type 
  *   bounding type that will be use to debug draw
  */
-BoundingType BoundingSphere::SetBoundingType(BoundingType type)
+BoundingSphere::Type BoundingSphere::SetBoundingType(BoundingSphere::Type type)
 {
   if(m_Type != type)
   {
@@ -87,34 +96,51 @@ BoundingType BoundingSphere::SetBoundingType(BoundingType type)
  * @brief 
  *   Calculates the bounding volume of the points
  * 
+ * @param modelToWorld
+ *   Model to world matrix
+ *
  * @param vertices 
  *   An array of points to create the bounding sphere object around
  */
-void BoundingSphere::Update(const std::vector<glm::vec3> & vertices)
+void BoundingSphere::Update(const glm::mat4& modelToWorld, const std::vector<glm::vec3> & vertices)
 {
   Clear(); // clear the previous information
+
+  // static temp vector, so there isnt reallocations every frame just for this vector
+  static std::vector<glm::vec3> temp;
+
+  // clear for every draw call and make sure there is enough space
+  temp.clear();
+  temp.reserve(vertices.size());
+
+  // loop through all the vertices of the model
+  for (unsigned i = 0; i < vertices.size(); ++i)
+  {
+    // convert vertices to world space
+    temp.emplace_back(glm::vec3(modelToWorld * glm::vec4(vertices[i], 1.0f)));
+  }
 
   //call right type of method to use
   switch (m_Type)
   {
   case Centroid:
   {
-    CentroidMethod(vertices); 
+    CentroidMethod(temp);
     break;
   }
   case Ritters:
   {
-    RittersMethod(vertices);
+    RittersMethod(temp);
     break;
   }
   case Larssons:
   {
-    LarssonsMethod(vertices);
+    LarssonsMethod(temp);
     break;
   }
   case PCA:
   {
-    PCAMethod(vertices);
+    PCAMethod(temp);
     break;
   }
   }

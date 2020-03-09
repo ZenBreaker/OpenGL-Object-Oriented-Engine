@@ -57,15 +57,15 @@ void AssetManager::Shutdown()
  *   A shared pointer of the model so the call doesn't handle with the
  *   destructor
  */
-ModelPtr AssetManager::GetModel(ModelIndex index)
+ModelPtr AssetManager::GetModel(Model::Index index)
 {
   // checks if the model has already been loaded
-  if (m_Models.find(ModelNames[index]) == m_Models.end()) 
+  if (m_Models.find(Model::IndexNames[index]) == m_Models.end())
   {
-    m_Models.emplace(ModelNames[index], new Model(index)); // loads model
+    m_Models.emplace(Model::IndexNames[index], new Model(index)); // loads model
   }
   
-  return m_Models[ModelNames[index]]; // returns the model
+  return m_Models[Model::IndexNames[index]]; // returns the model
 }
 
 /**

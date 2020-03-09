@@ -27,41 +27,14 @@ End Header --------------------------------------------------------*/
 #include <memory>
 #include <vector>
 
-#include "AABB.h"
+#include "AxisAlingedBoundingBox.h"
 #include "BoundingSphere.h"
 
 /**
  * @brief 
  *  Model Indices Names
  */
-enum ModelIndex
-{
-  FourSphere,
-  Bunny,
-  BunnyHighPoly,
-  Cube,
-  CubeTwo,
-  Cup,
-  LucyPrinceton,
-  Quad,
-  Sphere,
-  SphereModified,
-};
 
-// String version of Model Indices
-static const char* const ModelNames[] =
-{
-  "4Sphere",
-  "bunny",
-  "bunny_high_poly",
-  "cube",
-  "cube2",
-  "cup",
-  "lucy_princeton",
-  "quad",
-  "sphere",
-  "sphere_modified",
-};
 
 /**
  * @brief 
@@ -70,8 +43,27 @@ static const char* const ModelNames[] =
 class Model
 {
 public:
+
+  enum Index
+  {
+    FourSphere,
+    Bunny,
+    BunnyHighPoly,
+    Cube,
+    CubeTwo,
+    Cup,
+    LucyPrinceton,
+    Quad,
+    Sphere,
+    SphereModified,
+  };
+
+  // String version of Model Indices
+  static std::vector<std::string> IndexNames;
+  
+
   // Default constructor for a new Model object
-  Model(ModelIndex index = ModelIndex::Bunny);
+  Model(Index index = Bunny);
 
   Model(const Model& rhs) = delete;
   Model(Model&& rhs) = delete;
@@ -81,14 +73,8 @@ public:
 
   // Move constructor for a Model object
   Model& operator=(Model&& rhs) noexcept;
-
-  // Debug Draw AABB 
-  void DrawAABBBounds(const glm::mat4& modelToWorld);
-
-  // Debug Draw Bounding Sphere
-  void DrawBoundingSphere(const glm::mat4 & modelToWorld);
   
-  ModelIndex m_ModelIndex;                //!< index of the current model
+  Index m_ModelIndex;                //!< index of the current model
   std::vector<glm::vec3> m_Vertices;      //!< vector of vertices
   std::vector<glm::vec3> m_VertexNormals; //!< vector of vertex normals
   std::vector<glm::uint> m_Indices;       //!< vector of indices
@@ -99,6 +85,7 @@ public:
   GLuint m_VNBO;                          //!< (vertex normal) buffer number
   GLuint m_EBO;                           //!< (indices) buffer number
   GLuint m_DrawMode;                      //!< draw mode
+
 
 private:
   // Model Parsing for ".obj"
@@ -112,9 +99,6 @@ private:
 
   // Set member variables to zero
   void SetZero();
-
-  AABB m_AABBBounds;               //!< axis aligned bounding box for the model
-  BoundingSphere m_BoundingSphere; //!< bounding sphere for the model
 };
 
 using ModelPtr = std::shared_ptr<Model>;

@@ -1,6 +1,6 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-File Name: AABB.c
+File Name: AxisAlingedBoundingBox.c
 Purpose: Axis Alinged Bounding Boxes for Debug purposes 
 Language: C++ and Visual Studio 2019
 Platform:
@@ -19,32 +19,32 @@ Author: Michael Ngo, michael.ngo, 90003217
 Creation date: 2/2/2020
 End Header --------------------------------------------------------*/
 
-#include "AABB.h" /* AABB */
+#include "AxisAlingedBoundingBox.h" /* AxisAlingedBoundingBox */
 
 #include <limits> 
 #include "Engine.h" /* Engine */
 
 /**
  * @brief 
- *   Constructor a new AABB object
+ *   Constructor a new AxisAlingedBoundingBox object
  */
-AABB::AABB() : m_Max(-INFINITY), m_Min(INFINITY)
+AxisAlingedBoundingBox::AxisAlingedBoundingBox() : m_Max(-INFINITY), m_Min(INFINITY)
 {
 }
 
 /**
  * @brief 
- *   Destructure the AABB object
+ *   Destructure the AxisAlingedBoundingBox object
  */
-AABB::~AABB()
+AxisAlingedBoundingBox::~AxisAlingedBoundingBox()
 {
 }
 
 /**
  * @brief 
- *   Draws the debug AABB information
+ *   Draws the debug AxisAlingedBoundingBox information
  */
-void AABB::Draw()
+void AxisAlingedBoundingBox::Draw(const glm::vec3& color) const
 {
   Rect3D rect; // temp rect for debug draw
 
@@ -59,14 +59,14 @@ void AABB::Draw()
   rect.Center = Center();
 
   // request to draw the rect
-  Engine::get().m_Debug.drawWorldRects(rect, 1, 1, 1, true);
+  Engine::get().m_Debug.drawWorldRects(rect, color, true);
 }
 
 /**
  * @brief 
- *   Clears the AABB information
+ *   Clears the AxisAlingedBoundingBox information
  */
-void AABB::Clear()
+void AxisAlingedBoundingBox::Clear()
 {
   m_Max = glm::vec3(-INFINITY); // resetting the max to the lowest number
   m_Min = glm::vec3(INFINITY);  // resetting the min to the highest number
@@ -74,23 +74,23 @@ void AABB::Clear()
 
 /**
  * @brief 
- *   Returns the center of the AABB Object
+ *   Returns the center of the AxisAlingedBoundingBox Object
  * 
  * @return glm::vec3 
  */
-glm::vec3 AABB::Center()
+glm::vec3 AxisAlingedBoundingBox::Center() const
 {
   return (m_Max + m_Min) / 2.0f; // calculating the center of the rect
 }
 
 /**
  * @brief 
- *   Returns the size of the AABB Object
+ *   Returns the size of the AxisAlingedBoundingBox Object
  * 
  * @return glm::vec3 
  *   The size in x y and z directions
  */
-glm::vec3 AABB::Size()
+glm::vec3 AxisAlingedBoundingBox::Size() const 
 {
   return m_Max - m_Min; // calculating the size of the rect
 }
@@ -100,40 +100,54 @@ glm::vec3 AABB::Size()
  *   Calculates the bounding volume of the points
  * 
  * @param points 
- *   An array of points to create the AABB object around
+ *   An array of points to create the AxisAlingedBoundingBox object around
  */
-void AABB::Update(const std::vector<glm::vec3>& points)
+void AxisAlingedBoundingBox::Update(const glm::mat4& modelToWorld, const std::vector<glm::vec3>& points)
 {
   Clear(); // clear the previous information
+  //
+  // static temp vector, so there isnt reallocations every frame just for this vector
+  static std::vector<glm::vec3> temp;
+
+  // clear for every draw call and make sure there is enough space
+  temp.clear();
+  temp.reserve(points.size());
+
+  // loop through all the vertices of the model
+  for (unsigned i = 0; i < points.size(); ++i)
+  {
+    // convert vertices to world space
+    temp.emplace_back(glm::vec3(modelToWorld * glm::vec4(points[i], 1.0f)));
+  }
 
   //for each point in points
-  for(unsigned i = 0; i < points.size(); ++i)
+  for(unsigned i = 0; i < temp.size(); ++i)
   {
-    if (points[i].x < m_Min.x) // check for lower x value
+    if (temp[i].x < m_Min.x) // check for lower x value
     {
-      m_Min.x = points[i].x;
+      m_Min.x = temp[i].x;
     }
-    else if (points[i].x > m_Max.x) // check for higher x value
+    else if (temp[i].x > m_Max.x) // check for higher x value
     {
-      m_Max.x = points[i].x;
-    }
-
-    if (points[i].y < m_Min.y) // check for lower y value
-    {
-      m_Min.y = points[i].y;
-    }
-    else if (points[i].y > m_Max.y) // check for higher y value
-    {
-      m_Max.y = points[i].y;
+      m_Max.x = temp[i].x;
     }
 
-    if (points[i].z < m_Min.z) // check for lower z value
+    if (temp[i].y < m_Min.y) // check for lower y value
     {
-      m_Min.z = points[i].z;
+      m_Min.y = temp[i].y;
     }
-    else if (points[i].z > m_Max.z) // check for higher z value
+    else if (temp[i].y > m_Max.y) // check for higher y value
     {
-      m_Max.z = points[i].z;
+      m_Max.y = temp[i].y;
+    }
+
+    if (temp[i].z < m_Min.z) // check for lower z value
+    {
+      m_Min.z = temp[i].z;
+    }
+    else if (temp[i].z > m_Max.z) // check for higher z value
+    {
+      m_Max.z = temp[i].z;
     }
   }
 }

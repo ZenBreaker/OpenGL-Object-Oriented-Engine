@@ -49,14 +49,16 @@ void Object::Update(float deltaTime)
 
   if (m_DrawAABB) 
   {
-    m_Model->DrawAABBBounds(matrix4());
+    m_AABB.Update(matrix4(), m_Model->m_Vertices);
+    m_AABB.Draw({1,1,1});
   }
 
   m_DrawBoundingSphere = false;
 
   if (m_DrawBoundingSphere)
   {
-    m_Model->DrawBoundingSphere(matrix4());
+    m_BoundingSphere.Update(matrix4(), m_Model->m_Vertices);
+    m_BoundingSphere.Draw();
   }
 }
 

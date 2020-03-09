@@ -23,24 +23,9 @@ End Header --------------------------------------------------------*/
 #define BOUNDINGSPHERE_H
 
 #include <glm/glm.hpp>
+#include <string>
 #include <vector>
 
-enum BoundingType //!< Bounding types
-{
-  Centroid,
-  Ritters,
-  Larssons,
-  PCA,
-};
-
-//! String version of bounding types
-static const char* const BoundingTypeNames[] =
-{
-  "Centroid",
-  "Ritters",
-  "Larssons",
-  "PCA",
-};
 
 /**
  * @brief 
@@ -49,6 +34,18 @@ static const char* const BoundingTypeNames[] =
 class BoundingSphere
 {
 public:
+  //! Bounding types
+  enum Type
+  {
+    Centroid,
+    Ritters,
+    Larssons,
+    PCA,
+  };
+
+  //! String version of bounding types
+  static std::vector<std::string> TypeNames;
+
   // Constructor a new Bounding Sphere object
   BoundingSphere();
   // Destructure the Bounding Sphere object
@@ -61,10 +58,10 @@ public:
   void Clear();
 
   // Set bounding type method
-  BoundingType SetBoundingType(BoundingType type);
+  Type SetBoundingType(Type type);
 
   // Calculates the bounding volume of the points
-  void Update(const std::vector<glm::vec3>& vertices);
+  void Update(const glm::mat4& modelToWorld, const std::vector<glm::vec3>& vertices);
 
   // Centroid Method calculation
   void CentroidMethod(const std::vector<glm::vec3>& vertices);
@@ -81,7 +78,9 @@ public:
 private:
   glm::vec3 m_Center;  //!< Center of the sphere
   float m_Radius;      //!< Radius of the sphere
-  BoundingType m_Type; //!< Bounding type
+  Type m_Type; //!< Bounding type
 };
+
+
 
 #endif

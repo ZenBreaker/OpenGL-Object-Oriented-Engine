@@ -1,7 +1,7 @@
 /* Start Header -------------------------------------------------------
 Copyright (C) 2019 DigiPen Institute of Technology.
-File Name: Shader.h
-Purpose: holds shader data
+File Name: DefaultShader.vert
+Purpose: Default shading if no shader was appiled
 Language: C++ and Visual Studio 2017
 Platform:
 compiler version:
@@ -18,47 +18,21 @@ Project: michael.ngo_CS350_1
 Author: Michael Ngo, michael.ngo, 90003217
 Creation date: 2/2/2020
 End Header --------------------------------------------------------*/
-#ifndef SHADER_H
-#define SHADER_H
 
-#include <glew-2.1.0/GL/glew.h>
+#version 430 core
 
-#include <memory>
+layout(location = 0) in vec3 vPosition;
+layout(location = 1) in vec3 vColor;
 
-enum ShaderIndex
+out vec3 color;
+
+uniform mat4 PerspectiveMatrix;
+uniform mat4 ViewMatrix;
+uniform mat4 ModelMatrix;
+
+void main()
 {
-  DefaultShader,
-  ColorShader,
-  LightShader,
-  PhongShading,
-  DeferredFirstPassShader,
-  LightingPass,
-  TextureShader,
-};
-
-static const char* const ShaderNames[] =
-{
-  "DefaultShader",
-  "ColorShader",
-  "LightShader",
-  "PhongShading",
-  "DeferredFirstPassShader",
-  "LightingPass",
-  "TextureShader",
-};
-
-class Shader
-{
-public:
-  Shader(ShaderIndex index = ShaderIndex::DefaultShader);
-
-  ShaderIndex m_Index;
-  GLuint m_ProgramID;
-
-private:
-  GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
-};
-
-using ShaderPtr = std::shared_ptr<Shader>;
-
-#endif
+  vec4 vPos = vec4( vPosition, 1.0f );
+  gl_Position = PerspectiveMatrix * ViewMatrix * ModelMatrix * vPos;
+  color = vColor;
+}

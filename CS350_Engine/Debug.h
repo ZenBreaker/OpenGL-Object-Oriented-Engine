@@ -30,6 +30,17 @@ End Header --------------------------------------------------------*/
 
 /**
  * @brief
+ *   Point struct
+ */
+struct Point
+{
+  Point(const glm::vec3 & point, const glm::vec3& color = {1,1,1}) : point(point), color(color) {}
+  glm::vec3 point;
+  glm::vec3 color;
+};
+
+/**
+ * @brief
  *   line struct
  */
 struct Line
@@ -89,11 +100,10 @@ struct EBOData
  */
 struct DrawData
 {
-  std::vector<glm::vec3> points; //!< vertices
-  EBOData EBO;                   //!< EBO Data        
-  bool depthEnable;              //!< depth enable
-  bool fill;                     //!< fill 
-  float r, g, b;                 //!< color value
+  std::vector<Point> points; //!< vertices
+  EBOData EBO;               //!< EBO Data        
+  bool depthEnable;          //!< depth enable
+  bool fill;                 //!< fill 
 };
 
 /**
@@ -125,7 +135,7 @@ public:
   void drawScreenRects(std::vector<Rect2D> rects, bool depthEnable);
 
   // draw debug a rect in world space
-  void drawWorldRects(const Rect3D &rect, float r, float g, float b, bool depthEnable);
+  void drawWorldRects(const Rect3D &rect, const glm::vec3& color, bool depthEnable);
 
   // debug draw a sphere in world space
   void drawWorldSphere(glm::vec3 center, float radius, bool depthEnable);

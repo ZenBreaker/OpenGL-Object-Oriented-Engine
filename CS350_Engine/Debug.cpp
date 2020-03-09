@@ -77,15 +77,15 @@ void Debug::Init()
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBOStatic3DRect);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, BoxIndices.size() * sizeof(unsigned int), BoxIndices.data(), GL_STREAM_DRAW);
 
-  auto sphere = Engine::get().m_AssetManager.GetModel(ModelIndex::Sphere);
+  auto sphere = Engine::get().m_AssetManager.GetModel(Model::Sphere);
   glGenBuffers(1, &m_EBOStaticSphere);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBOStaticSphere);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphere->m_Indices.size() * sizeof(unsigned int), sphere->m_Indices.data(), GL_STREAM_DRAW);
 
   // get uniforms from debug shader
-  m_ViewUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::DefaultShader)->m_ProgramID, "ViewMatrix");
-  m_PerspectiveUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::DefaultShader)->m_ProgramID, "PerspectiveMatrix");
-  m_ModelUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::DefaultShader)->m_ProgramID, "ModelMatrix");
+  m_ViewUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::ColorShader)->m_ProgramID, "ViewMatrix");
+  m_PerspectiveUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::ColorShader)->m_ProgramID, "PerspectiveMatrix");
+  m_ModelUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::ColorShader)->m_ProgramID, "ModelMatrix");
 }
 
 /**
@@ -95,7 +95,7 @@ void Debug::Init()
 void Debug::Update()
 {
   // use debug shader
-  glUseProgram(Engine::get().m_AssetManager.GetShader(ShaderIndex::DefaultShader)->m_ProgramID);
+  glUseProgram(Engine::get().m_AssetManager.GetShader(ShaderIndex::ColorShader)->m_ProgramID);
 
   // attach vao and buffers
   glBindVertexArray(m_VAO);
@@ -103,7 +103,9 @@ void Debug::Update()
 
   // enable attribute location 0 and 1
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Point), (void*)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Point), (void*)offsetof(Point, color));
 
   // Set matrix uniforms for the shader 
   glUniformMatrix4fv(m_ViewUniform, 1, GL_FALSE, &Engine::get().m_RenderingManager.m_View[0][0]);
@@ -117,7 +119,7 @@ void Debug::Update()
   for (int i = 0; i < m_Queue.size(); ++i)
   {
     // set buffer data
-    glBufferData(GL_ARRAY_BUFFER, m_Queue[i].points.size() * sizeof(glm::vec3), m_Queue[i].points.data(), GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_Queue[i].points.size() * sizeof(Point), m_Queue[i].points.data(), GL_STREAM_DRAW);
 
     if(lastBindedEBO != m_Queue[i].EBO.id)
     {
@@ -130,7 +132,7 @@ void Debug::Update()
   }
 
   // unbind vao
-  glBindVertexArray(0);
+  glBindVertexArray(0); 
 
   // clear m_Queue
   m_Queue.clear();
@@ -197,7 +199,7 @@ void Debug::drawScreenRects(std::vector<Rect2D> rects, bool depthEnable)
  * @param depthEnable 
  *   depth dependent
  */
-void Debug::drawWorldRects(const Rect3D &rect, float r, float g, float b, bool depthEnable)
+void Debug::drawWorldRects(const Rect3D &rect, const glm::vec3 & color, bool depthEnable)
 {
   // temp data object
   DrawData data;
@@ -209,7 +211,8 @@ void Debug::drawWorldRects(const Rect3D &rect, float r, float g, float b, bool d
   for (int i = 0; i < std::size(BoxVertices); i+=3)
   {
     // NDC * scale + translate
-    data.points.emplace_back(BoxVertices[i] * rect.width + rect.Center.x, BoxVertices[i+1] * rect.height + rect.Center.y, BoxVertices[i+2] * rect.depth + rect.Center.z);
+    const glm::vec3 point{ BoxVertices[i] * rect.width + rect.Center.x, BoxVertices[i + 1] * rect.height + rect.Center.y, BoxVertices[i + 2] * rect.depth + rect.Center.z };
+    data.points.emplace_back(point, color);
   }
 
   // Set the ebo of the debug object
@@ -219,9 +222,6 @@ void Debug::drawWorldRects(const Rect3D &rect, float r, float g, float b, bool d
   // set debug info
   data.depthEnable = depthEnable;
   data.fill = false;
-  data.r = r;
-  data.g = g;
-  data.b = b;
 
 
   // m_Queue box to draw later
@@ -244,7 +244,7 @@ void Debug::drawWorldRects(const Rect3D &rect, float r, float g, float b, bool d
 void Debug::drawWorldSphere(glm::vec3 center, float radius, bool depthEnable)
 {
   // grab sphere model
-  auto sphere = Engine::get().m_AssetManager.GetModel(ModelIndex::Sphere);
+  auto sphere = Engine::get().m_AssetManager.GetModel(Model::Sphere);
 
   // temp data 
   DrawData data;

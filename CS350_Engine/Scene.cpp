@@ -31,6 +31,9 @@ End Header --------------------------------------------------------*/
 Scene::Scene(SceneIndex number)
 {
   m_Camera.m_Position = glm::vec3(0.0f,0.0f,1.0f);
+  m_BoundingHierarchy.m_Construction = BoundingHierarchy::Construction::BottomUp;
+  m_BoundingHierarchy.m_Method = BoundingHierarchy::Method::AABB;
+  m_IsDrawingBoundingHierarchy = false;
 
 	switch (number)
 	{
@@ -39,16 +42,35 @@ Scene::Scene(SceneIndex number)
   case ONE:
   {
     Object& object1 = AddObject();
-    object1.m_Model = Engine::get().m_AssetManager.GetModel(ModelIndex::Bunny);
+    object1.m_Model = Engine::get().m_AssetManager.GetModel(Model::Bunny);
     object1.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object1.m_Centroid = glm::vec3(0.0f, 0.0f, 0.0f);
-    object1.m_Material.ambiant_color = glm::vec3(1.0f, 0.0f, 1.0f);
+    object1.m_Material.ambiant_color = glm::vec3(1.0f, 0.3f, 1.0f);
+
+    Object& object2 = AddObject();
+    object2.m_Model = Engine::get().m_AssetManager.GetModel(Model::Sphere);
+    object2.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
+    object2.m_Centroid = glm::vec3(2.17f, -0.590f, 0.51f);
+    object2.m_Material.ambiant_color = glm::vec3(0.4f, 1.0f, 1.0f);
+
+
+    Object& object3 = AddObject();
+    object3.m_Model = Engine::get().m_AssetManager.GetModel(Model::FourSphere);
+    object3.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
+    object3.m_Centroid = glm::vec3(-1.690f, 0.88f, -0.870f);
+    object3.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 0.0f);
+
+    Object& object4 = AddObject();
+    object4.m_Model = Engine::get().m_AssetManager.GetModel(Model::BunnyHighPoly);
+    object4.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
+    object4.m_Centroid = glm::vec3(-0.60f, -0.430f, 0.310f);
+    object4.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
     for (int i = 0; i < 8; i++)
     {
       float hue = 360.0f * ((float)rand() / (float)RAND_MAX - 0.5f) * 8;
       Object& light1 = AddLight();
-      light1.m_Model = Engine::get().m_AssetManager.GetModel(ModelIndex::Sphere);
+      light1.m_Model = Engine::get().m_AssetManager.GetModel(Model::Sphere);
       light1.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::LightShader));
       light1.m_Centroid = glm::vec3(0.0f, 0.0f, 0.0f);
       light1.m_ScaleVector = glm::vec3(.1f);
@@ -75,7 +97,7 @@ Scene::~Scene()
 
 void Scene::Update(float deltaTime)
 {
-  for(Object object : m_Objects)
+  for(Object& object : m_Objects)
   {
     object.Update(deltaTime);
   }
@@ -90,6 +112,11 @@ void Scene::Update(float deltaTime)
     m_Lights[i].m_Light->position = m_Lights[i].m_Centroid;
     m_Lights[i].m_Light->direction = glm::rotate(m_Lights[i].m_RotationAngle, m_Lights[i].m_RotationVector) * glm::vec4(1.0f);
     m_Lights[i].m_Light->ambiant = m_Lights[i].m_Material.ambiant_color;
+  }
+
+  if(m_IsDrawingBoundingHierarchy)
+  {
+    m_BoundingHierarchy.Draw(m_Objects);
   }
 }
 

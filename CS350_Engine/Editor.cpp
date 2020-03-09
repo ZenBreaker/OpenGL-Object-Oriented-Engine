@@ -148,6 +148,11 @@ void Editor::PostRender()
     ImGui::TreePop();
   }
 
+  if(ImGui::Checkbox("Bounding Hierarchy", &Engine::get().m_SceneManager.m_CurrentScene->m_IsDrawingBoundingHierarchy))
+  {
+    
+  }
+
   if (ImGui::TreeNode("Lights"))
   {
     // loop through all light objects
@@ -161,11 +166,11 @@ void Editor::PostRender()
         {
           bool has_changed = false;
           int currentindex = (int)light.m_Model->m_ModelIndex;
-          if (ImGui::BeginCombo("Model Name", ModelNames[currentindex]))
+          if (ImGui::BeginCombo("Model Name", Model::IndexNames[currentindex].c_str()))
           {
-            for (std::size_t j = 0; j < sizeof(ModelNames) / sizeof(char *); ++j)
+            for (std::size_t j = 0; j < sizeof(Model::IndexNames) / sizeof(char *); ++j)
             {
-              if (ImGui::Selectable(ModelNames[j], currentindex == j))
+              if (ImGui::Selectable(Model::IndexNames[j].c_str(), currentindex == j))
               {
                 currentindex = (int)j;
                 has_changed = true;
@@ -176,7 +181,7 @@ void Editor::PostRender()
 
           if (has_changed)
           {
-            light.m_Model = Engine::get().m_AssetManager.GetModel((ModelIndex)currentindex);
+            light.m_Model = Engine::get().m_AssetManager.GetModel((Model::Index)currentindex);
           }
 
           //ImGui::TreePop();
@@ -360,11 +365,11 @@ void Editor::PostRender()
         {
           bool has_changed = false;
           int currentindex = (int)object.m_Model->m_ModelIndex;
-          if (ImGui::BeginCombo("Model Name", ModelNames[currentindex]))
+          if (ImGui::BeginCombo("Model Name", Model::IndexNames[currentindex].c_str()))
           {
-            for (std::size_t j = 0; j < sizeof(ModelNames) / sizeof(char *); ++j)
+            for (std::size_t j = 0; j < sizeof(Model::IndexNames) / sizeof(char *); ++j)
             {
-              if (ImGui::Selectable(ModelNames[j], currentindex == j))
+              if (ImGui::Selectable(Model::IndexNames[j].c_str(), currentindex == j))
               {
                 currentindex = (int)j;
                 has_changed = true;
@@ -375,7 +380,7 @@ void Editor::PostRender()
 
           if (has_changed)
           {
-            object.m_Model = Engine::get().m_AssetManager.GetModel((ModelIndex)currentindex);
+            object.m_Model = Engine::get().m_AssetManager.GetModel((Model::Index)currentindex);
           }
 
           //ImGui::TreePop();

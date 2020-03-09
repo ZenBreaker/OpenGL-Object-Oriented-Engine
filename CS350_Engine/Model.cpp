@@ -27,6 +27,22 @@ End Header --------------------------------------------------------*/
 
 #include "Model.h"
 
+
+std::vector<std::string> Model::IndexNames
+{
+  "4Sphere",
+    "bunny",
+    "bunny_high_poly",
+    "cube",
+    "cube2",
+    "cup",
+    "lucy_princeton",
+    "quad",
+    "sphere",
+    "sphere_modified",
+};
+
+
 /**
  * @brief 
  *   Default constructor for a new Model object
@@ -34,11 +50,11 @@ End Header --------------------------------------------------------*/
  * @param index 
  *   Index of model to create
  */
-Model::Model(ModelIndex index)
+Model::Model(Index index)
 {
   m_ModelIndex = index;
   std::string filename("models\\");
-  filename.append(ModelNames[index]);
+  filename.append(IndexNames[index]);
   filename.append(".obj");
   ParseModel(filename.c_str());
 }
@@ -110,62 +126,6 @@ void Model::SetZero()
   m_FaceNormals.clear();
   m_FacesPosition.clear();
   m_Indices.clear();
-}
-
-/**
- * @brief 
- *   Debug Draw AABB 
- * 
- * @param modelToWorld 
- *   model to world matrix
- */
-void Model::DrawAABBBounds(const glm::mat4 & modelToWorld)
-{
-  // static temp vector, so there isnt reallocations every frame just for this vector
-  static std::vector<glm::vec3> temp;
-
-  // clear for every draw call and make sure there is enough space
-  temp.clear();
-  temp.reserve(m_Vertices.size());
-
-  // loop through all the vertices of the model
-  for (unsigned i = 0; i < m_Vertices.size(); ++i)
-  {
-    // convert vertices to world space
-    temp.emplace_back(glm::vec3(modelToWorld * glm::vec4(m_Vertices[i], 1.0f)));
-  }
-
-  // update and draw bounds
-  m_AABBBounds.Update(temp);
-  m_AABBBounds.Draw();
-}
-
-/**
- * @brief 
- *   Debug Draw Bounding Sphere
- * 
- * @param modelToWorld 
- *   model to world matrix
- */
-void Model::DrawBoundingSphere(const glm::mat4& modelToWorld)
-{
-  // static temp vector, so there isnt reallocations every frame just for this vector
-  static std::vector<glm::vec3> temp;
-
-  // clear for every draw call and make sure there is enough space
-  temp.clear();
-  temp.reserve(m_Vertices.size());
-
-  // loop through all the vertices of the model
-  for (unsigned i = 0; i < m_Vertices.size(); ++i)
-  {
-    // convert vertices to world space
-    temp.emplace_back(glm::vec3(modelToWorld * glm::vec4(m_Vertices[i], 1.0f)));
-  }
-
-  // update and draw bounds
-  m_BoundingSphere.Update(temp);
-  m_BoundingSphere.Draw();
 }
 
 /**

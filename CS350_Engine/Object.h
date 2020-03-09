@@ -149,8 +149,10 @@ public:
   GLint m_EyePositionUniform;       //!< Eye Position Uniform
 
   GLint m_AmbiantColorUniform;      //!< Ambiant Color Uniform
-  bool m_DrawAABB;                  //!< Whether or not to draw AABB
+  bool m_DrawAABB;                  //!< Whether or not to draw AxisAlingedBoundingBox
+  AxisAlingedBoundingBox m_AABB;
   bool m_DrawBoundingSphere;        //!< Whether or not to draw bounding spheres
+  BoundingSphere m_BoundingSphere;
 private:
 };
 

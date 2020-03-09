@@ -26,6 +26,8 @@ End Header --------------------------------------------------------*/
 
 #include <vector>
 
+
+#include "BoundingHierarchy.h"
 #include "Object.h"
 #include "Camera.h"
 
@@ -55,6 +57,8 @@ public:
   Camera m_Camera;
   std::vector<Object> m_Objects;
   std::vector<Object> m_Lights;
+  bool m_IsDrawingBoundingHierarchy;
+  BoundingHierarchy m_BoundingHierarchy;
 
 private:
 };

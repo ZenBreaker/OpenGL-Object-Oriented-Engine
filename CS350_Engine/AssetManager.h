@@ -47,7 +47,7 @@ public:
   void Shutdown();
 
   // Getter for the all models that can be loaded for the project
-  ModelPtr GetModel(ModelIndex index);
+  ModelPtr GetModel(Model::Index index);
 
   // Getter for the all shaders that can be loaded for the project
   ShaderPtr GetShader(ShaderIndex index);
