@@ -27,6 +27,7 @@ End Header --------------------------------------------------------*/
 Object::Object(const char* name) :
   m_Name(name),
   m_Model(nullptr),
+  m_Material({}),
   m_Shader(nullptr),
   m_Centroid({0.0f}),
   m_ScaleVector(glm::vec3(1.0f)),

@@ -65,6 +65,14 @@ struct Light
  */
 struct Material
 {
+  Material(GLfloat spec = 25, glm::vec3 ambiant = {0.0f,0.0f,0.0f}, glm::vec3 diffuse = { 1.0f ,1.0f ,1.0f }, glm::vec3 specular = { 1.0f ,1.0f ,1.0f }, glm::vec3 emissive = { 0.0f, 0.0f, 0.0f}) :
+  specular_exponent(spec),
+  ambiant_color(ambiant),
+  diffuse_color(diffuse),
+  specular_color(specular),
+  emissive_color(emissive)
+  {
+  }
 public:
   GLfloat   specular_exponent; //!< specular exponent 
   glm::vec3 ambiant_color;     //!< ambiant color
