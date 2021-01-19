@@ -125,9 +125,41 @@ void Engine::Init(int windowWidth, int windowHeight, const char* windowName, int
   //Init Managers
   {
     m_Input.Init(m_Window);
+    {
+      GLenum error_out;
+      while ((error_out = glGetError()) != GL_NO_ERROR)
+      {
+        __debugbreak();
+        printf("oof %i", error_out);
+      }
+    }
     m_AssetManager.Init();
+    {
+      GLenum error_out;
+      while ((error_out = glGetError()) != GL_NO_ERROR)
+      {
+        __debugbreak();
+        printf("oof %i", error_out);
+      }
+    }
     m_Debug.Init();
+    {
+      GLenum error_out;
+      while ((error_out = glGetError()) != GL_NO_ERROR)
+      {
+        __debugbreak();
+        printf("oof %i", error_out);
+      }
+    }
     m_RenderingManager.Init();
+    {
+      GLenum error_out;
+      while ((error_out = glGetError()) != GL_NO_ERROR)
+      {
+        __debugbreak();
+        printf("oof %i", error_out);
+      }
+    }
     m_SceneManager.Init();
   }
 }

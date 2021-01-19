@@ -33,7 +33,7 @@ extern int windowWidth;
 extern int windowHeight;
 
 // static attachments for deferred rendering
-static const unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+static const unsigned int attachments[6] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5 };
 
 // static full size quad
 const float quadVertices[] = {
@@ -58,6 +58,14 @@ RenderingManager::RenderingManager()
  */
 void RenderingManager::Init()
 {
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // initialized member variables 
   m_Lights.constant = 1.0f;
   m_Lights.linear = 0.7f;
@@ -67,19 +75,42 @@ void RenderingManager::Init()
   m_FSQ = GeometryBuffer::All;
   m_DepthCopy = true;
 
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
+
   // Generate SSBO for Deferred Rendering
   glGenBuffers(1, &m_SSBOUniform);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBOUniform);
   glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(LightData), &m_Lights, GL_DYNAMIC_COPY);
   glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // Activate Depth Test
   glEnable(GL_DEPTH_TEST);
 
   // Generate geometry framebuffer for Deferred Rendering
   glGenFramebuffers(1, &m_GeometryBuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, m_GeometryBuffer);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // Get application width and height
   const int width = Engine::get().m_Width;
   const int height = Engine::get().m_Height;
@@ -91,7 +122,14 @@ void RenderingManager::Init()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_GeometryPosition, 0);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // normal color buffer
   glGenTextures(1, &m_GeometryNormal);
   glBindTexture(GL_TEXTURE_2D, m_GeometryNormal);
@@ -100,20 +138,78 @@ void RenderingManager::Init()
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_GeometryNormal, 0);
 
-  // color + specular color buffer
-  glGenTextures(1, &m_GeometryAlbedoSpec);
-  glBindTexture(GL_TEXTURE_2D, m_GeometryAlbedoSpec);
+  // diffuse color buffer
+  glGenTextures(1, &m_GeometryDiffuse);
+  glBindTexture(GL_TEXTURE_2D, m_GeometryDiffuse);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_GeometryDiffuse, 0);
+
+  // specular color buffer
+  glGenTextures(1, &m_GeometrySpecular);
+  glBindTexture(GL_TEXTURE_2D, m_GeometrySpecular);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_GeometryAlbedoSpec, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_GeometrySpecular, 0);
+
+  // emissive color buffer
+  glGenTextures(1, &m_GeometryEmissive);
+  glBindTexture(GL_TEXTURE_2D, m_GeometryEmissive);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_GeometryEmissive, 0);
+
+  // ambient color buffer
+  glGenTextures(1, &m_GeometryAmbient);
+  glBindTexture(GL_TEXTURE_2D, m_GeometryAmbient);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT5, GL_TEXTURE_2D, m_GeometryAmbient, 0);
+
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
 
   // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-  glDrawBuffers(3, attachments);
+  glDrawBuffers(6, attachments);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
 
   // create and attach depth buffer (renderbuffer)
   glGenRenderbuffers(1, &m_RenderBufferObjectDepth);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   glBindRenderbuffer(GL_RENDERBUFFER, m_RenderBufferObjectDepth);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
+
   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RenderBufferObjectDepth);
 
@@ -121,13 +217,30 @@ void RenderingManager::Init()
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     std::cout << "Framebuffer not complete!" << std::endl;
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // set lighting data uniforms for Deferred Rendering
   const auto lightingPassShaderID = Engine::get().m_AssetManager.GetShader(ShaderIndex::LightingPass)->m_ProgramID;
   m_GeometryPositionUniform = glGetUniformLocation(lightingPassShaderID, "gPosition");
   m_GeometryNormalUniform = glGetUniformLocation(lightingPassShaderID, "gNormal");
-  m_GeometryAlbedoSpecUniform = glGetUniformLocation(lightingPassShaderID, "gAlbedoSpec");
-
+  m_GeometryDiffuseUniform = glGetUniformLocation(lightingPassShaderID, "gDiffuse");
+  m_GeometryAmbientUniform = glGetUniformLocation(lightingPassShaderID, "gAmbient");
+  m_GeometrySpecularUniform = glGetUniformLocation(lightingPassShaderID, "gSpecular");
+  m_GeometryEmissiveUniform = glGetUniformLocation(lightingPassShaderID, "gEmissive");
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // setup plane VAO
   glGenVertexArrays(1, &m_FullQuadVAO);
   glGenBuffers(1, &m_FullQuadVBO);
@@ -138,6 +251,14 @@ void RenderingManager::Init()
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
 }
 
 /**
@@ -152,7 +273,10 @@ void RenderingManager::Shutdown()
   glDeleteVertexArrays(1, &m_FullQuadVAO);
   glDeleteTextures(1, &m_GeometryPosition);
   glDeleteTextures(1, &m_GeometryNormal);
-  glDeleteTextures(1, &m_GeometryAlbedoSpec);
+  glDeleteTextures(1, &m_GeometryDiffuse);
+  glDeleteTextures(1, &m_GeometryAmbient);
+  glDeleteTextures(1, &m_GeometryEmissive);
+  glDeleteTextures(1, &m_GeometrySpecular);
   glDeleteRenderbuffers(1, &m_RenderBufferObjectDepth);
 }
 
@@ -163,11 +287,11 @@ void RenderingManager::Shutdown()
  * @param scene
  *   Scene of which to draw
  */
-void RenderingManager::PreRender(const Scene* scene)
+void RenderingManager::PreRender(Scene* scene)
 {
   // clear framebuffer
-  glClearColor(0.5f, 0.0f, 0.5f, 1.0f); 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // bind geometry buffer to capture lighting data
   glBindFramebuffer(GL_FRAMEBUFFER, m_GeometryBuffer);
@@ -223,7 +347,7 @@ void RenderingManager::Render(const Scene* scene)
       glBindTexture(GL_TEXTURE_2D, m_GeometryPosition);
       break;
     }
-      
+
     case Normal:
     {
       glUniform1i(m_GeometryNormalUniform, 0);
@@ -231,11 +355,32 @@ void RenderingManager::Render(const Scene* scene)
       glBindTexture(GL_TEXTURE_2D, m_GeometryNormal);
       break;
     }
-    case AlbedoSpec:
+    case Diffuse:
     {
-      glUniform1i(m_GeometryAlbedoSpecUniform, 0);
+      glUniform1i(m_GeometryDiffuseUniform, 0);
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D, m_GeometryAlbedoSpec);
+      glBindTexture(GL_TEXTURE_2D, m_GeometryDiffuse);
+      break;
+    }
+    case Specular:
+    {
+      glUniform1i(m_GeometrySpecularUniform, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_GeometrySpecular);
+      break;
+    }
+    case Ambient:
+    {
+      glUniform1i(m_GeometryAmbientUniform, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_GeometryAmbient);
+      break;
+    }
+    case Emissive:
+    {
+      glUniform1i(m_GeometryEmissiveUniform, 0);
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D, m_GeometryEmissive);
       break;
     }
     }
@@ -248,7 +393,10 @@ void RenderingManager::Render(const Scene* scene)
     // set textures for the program to read from 
     glUniform1i(m_GeometryPositionUniform, 0);
     glUniform1i(m_GeometryNormalUniform, 1);
-    glUniform1i(m_GeometryAlbedoSpecUniform, 2);
+    glUniform1i(m_GeometryDiffuseUniform, 2);
+    glUniform1i(m_GeometryAmbientUniform, 3);
+    glUniform1i(m_GeometryEmissiveUniform, 4);
+    glUniform1i(m_GeometrySpecularUniform, 5);
 
     // enable and bind each texture
     glActiveTexture(GL_TEXTURE0);
@@ -256,7 +404,13 @@ void RenderingManager::Render(const Scene* scene)
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, m_GeometryNormal);
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, m_GeometryAlbedoSpec);
+    glBindTexture(GL_TEXTURE_2D, m_GeometryDiffuse);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, m_GeometryAmbient);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, m_GeometryEmissive);
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, m_GeometrySpecular);
   }
 
   // set the number of lights in the scene
@@ -290,7 +444,7 @@ void RenderingManager::Render(const Scene* scene)
  * @param scene
  *   Scene of which to draw
  */
-void RenderingManager::PostRender(const Scene* scene)
+void RenderingManager::PostRender(Scene* scene)
 {
   // if using depth copy
   if (m_DepthCopy)
@@ -304,7 +458,7 @@ void RenderingManager::PostRender(const Scene* scene)
     glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, Engine::get().m_Width, Engine::get().m_Height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
-  
+
   // save binded program id
   GLuint lastBindedProgramID = -1;
 
@@ -328,10 +482,10 @@ void RenderingManager::PostRender(const Scene* scene)
  * @param lastBindedProgramID
  *   last program id that was drawn from, for optimization
  */
-void RenderingManager::RenderObject(const Scene* scene, const Object& object, GLuint & lastBindedProgramID)
+void RenderingManager::RenderObject(const Scene* scene, Object& object, GLuint& lastBindedProgramID)
 {
   // check if last program id is the same as the current id
-  if(lastBindedProgramID != object.m_Shader->m_ProgramID)
+  if (lastBindedProgramID != object.m_Shader->m_ProgramID)
   {
     // use the new program id
     glUseProgram(object.m_Shader->m_ProgramID);
@@ -340,29 +494,6 @@ void RenderingManager::RenderObject(const Scene* scene, const Object& object, GL
 
   // bind the model's vao
   glBindVertexArray(object.m_Model->m_VAO);
-
-  // enable vertex positions
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, object.m_Model->m_VBO);
-  glVertexAttribPointer(0,
-    3,
-    GL_FLOAT,
-    GL_FALSE,
-    0,
-    (void*)0);
-
-  // enable vertex normals
-  glEnableVertexAttribArray(1);
-  glBindBuffer(GL_ARRAY_BUFFER, object.m_Model->m_VNBO);
-  glVertexAttribPointer(1,
-    3,
-    GL_FLOAT,
-    GL_FALSE,
-    0,
-    (void *)0);
-
-  // bind index buffer
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object.m_Model->m_EBO);
 
   // set uniforms 
   glUniformMatrix4fv(object.m_ViewMatrixUniform, 1, GL_FALSE, &m_View[0][0]);
@@ -374,20 +505,26 @@ void RenderingManager::RenderObject(const Scene* scene, const Object& object, GL
   glUniform4fv(object.m_EyePositionUniform, 1, &eye[0]);
 
   glUniform3fv(object.m_AmbiantColorUniform, 1, &object.m_Material.ambiant_color[0]);
+  glUniform3fv(object.m_DiffuseColorUniform, 1, &object.m_Material.diffuse_color[0]);
+  glUniform3fv(object.m_EmissiveColorUniform, 1, &object.m_Material.emissive_color[0]);
+
+  glm::vec4 tempSpec = { object.m_Material.specular_color.x,object.m_Material.specular_color.y,object.m_Material.specular_color.z, object.m_Material.specular_exponent };
+  glUniform4fv(object.m_SpecularColorUniform, 1, &tempSpec[0]);
 
   // draw object 
   glDrawElements(object.m_Model->m_DrawMode, (GLsizei)object.m_Model->m_Indices.size(), GL_UNSIGNED_INT, NULL);
 
+  glBindVertexArray(0);
   // disable attributes
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
+  //glDisableVertexAttribArray(0);
+  //glDisableVertexAttribArray(1);
 }
 
 /**
  * @brief
  *   Render a full screen quad
  */
-void RenderingManager::RenderQuad() const 
+void RenderingManager::RenderQuad() const
 {
   // disable depth
   glDepthMask(GL_FALSE);

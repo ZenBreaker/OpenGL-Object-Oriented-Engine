@@ -44,36 +44,36 @@ Scene::Scene(SceneIndex number)
     Object& object1 = AddObject();
     object1.m_Model = Engine::get().m_AssetManager.GetModel(Model::Bunny);
     object1.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
-    object1.m_Centroid = glm::vec3(0.0f, 0.0f, 0.0f);
+    object1.SetCentroid(glm::vec3(0.0f, 0.0f, 0.0f));
     object1.m_Material.ambiant_color = glm::vec3(1.0f, 0.3f, 1.0f);
 
     Object& object2 = AddObject();
     object2.m_Model = Engine::get().m_AssetManager.GetModel(Model::Sphere);
     object2.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
-    object2.m_Centroid = glm::vec3(2.17f, -0.590f, 0.51f);
+    object2.SetCentroid(glm::vec3(2.17f, -0.590f, 0.51f));
     object2.m_Material.ambiant_color = glm::vec3(0.4f, 1.0f, 1.0f);
 
 
     Object& object3 = AddObject();
     object3.m_Model = Engine::get().m_AssetManager.GetModel(Model::FourSphere);
     object3.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
-    object3.m_Centroid = glm::vec3(-1.690f, 0.88f, -0.870f);
+    object3.SetCentroid(glm::vec3(-1.690f, 0.88f, -0.870f));
     object3.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 0.0f);
 
     Object& object4 = AddObject();
     object4.m_Model = Engine::get().m_AssetManager.GetModel(Model::BunnyHighPoly);
     object4.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
-    object4.m_Centroid = glm::vec3(-0.60f, -0.430f, 0.310f);
+    object4.SetCentroid(glm::vec3(-0.60f, -0.430f, 0.310f));
     object4.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < 1; i++)
     {
       float hue = 360.0f * ((float)rand() / (float)RAND_MAX - 0.5f) * 8;
       Object& light1 = AddLight();
       light1.m_Model = Engine::get().m_AssetManager.GetModel(Model::Sphere);
       light1.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::LightShader));
-      light1.m_Centroid = glm::vec3(0.0f, 0.0f, 0.0f);
-      light1.m_ScaleVector = glm::vec3(.1f);
+      light1.SetCentroid(glm::vec3(0.0f, 0.0f, 0.0f));
+      light1.SetScaleVector(glm::vec3(.1f));
       light1.m_Material.ambiant_color = glm::rgbColor(glm::vec3(hue, 1.0f, 0.5f));
       light1.m_RotationAmount = 3.14159f / 4.0f;
       light1.m_Light = new Light();
@@ -105,12 +105,12 @@ void Scene::Update(float deltaTime)
   for (int i = 0; i < m_Lights.size(); ++i)
   {
     m_Lights[i].Update(deltaTime);
-    float x = 2 * cos((i * 360.0f / m_Lights.size() * 3.1415f / 180.0f) + m_Lights[i].m_RotationAngle);
-    float y = 2 * sin((i * 360.0f / m_Lights.size() * 3.1415f / 180.0f) + m_Lights[i].m_RotationAngle);
+    float x = 2 * cos((i * 360.0f / m_Lights.size() * 3.1415f / 180.0f) + m_Lights[i].RotationAngle());
+    float y = 2 * sin((i * 360.0f / m_Lights.size() * 3.1415f / 180.0f) + m_Lights[i].RotationAngle());
 
-    m_Lights[i].m_Centroid = glm::vec3(x, 0.0f, y);
-    m_Lights[i].m_Light->position = m_Lights[i].m_Centroid;
-    m_Lights[i].m_Light->direction = glm::rotate(m_Lights[i].m_RotationAngle, m_Lights[i].m_RotationVector) * glm::vec4(1.0f);
+    m_Lights[i].SetCentroid(glm::vec3(x, 0.0f, y));
+    m_Lights[i].m_Light->position = m_Lights[i].Centroid();
+    m_Lights[i].m_Light->direction = glm::rotate(m_Lights[i].RotationAngle(), m_Lights[i].RotationVector()) * glm::vec4(1.0f);
     m_Lights[i].m_Light->ambiant = m_Lights[i].m_Material.ambiant_color;
   }
 

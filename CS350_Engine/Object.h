@@ -68,6 +68,9 @@ struct Material
 public:
   GLfloat   specular_exponent; //!< specular exponent 
   glm::vec3 ambiant_color;     //!< ambiant color
+  glm::vec3 diffuse_color;     //!< ambiant color
+  glm::vec3 specular_color;     //!< ambiant color
+  glm::vec3 emissive_color;     //!< ambiant color
 };
 
 /**
@@ -78,37 +81,47 @@ class Object
 {
 public:
   /**
-   * @brief 
-   *   Constructor of a new Object 
-   * 
-   * @param name 
+   * @brief
+   *   Constructor of a new Object
+   *
+   * @param name
    *   Name of the Object
    */
   Object(const char* name = "");
 
   /**
-   * @brief 
-   *   Destructure of the Object  
+   * @brief
+   *   Destructure of the Object
    */
   ~Object();
 
   /**
-   * @brief 
-   *   Defaults update for objects 
-   * 
-   * @param deltaTime 
+   * @brief
+   *   Defaults update for objects
+   *
+   * @param deltaTime
    *   delta time of the engine
    */
   void Update(float deltaTime);
 
   /**
-   * @brief 
+   * @brief
    *   Set the Shader of the object
-   * 
-   * @param shader 
+   *
+   * @param shader
    *   what shader to set to
    */
   void SetShader(const ShaderPtr& shader);
+
+  const glm::vec3& ScaleVector() const { return m_ScaleVector; }
+  const glm::vec3& Centroid() const { return m_Centroid; }
+  const glm::vec3& RotationVector() const { return m_RotationVector; }
+  const GLfloat& RotationAngle() const { return m_RotationAngle; }
+
+  void SetScaleVector(const glm::vec3& scale) { m_ScaleVector = scale; m_IsDirty = true;  }
+  void SetCentroid(const glm::vec3& position) { m_Centroid = position; m_IsDirty = true; }
+  void SetRotationVector(const glm::vec3& RotationVector) { m_RotationVector = RotationVector; m_IsDirty = true; }
+  void SetRotationAngle(const GLfloat& RotationAngle) { m_RotationAngle = RotationAngle; m_IsDirty = true; }
 
   /**
    * @brief 
@@ -117,7 +130,7 @@ public:
    * @return glm::mat4 
    *   Model to world martix
    */
-  glm::mat4 matrix4() const;
+  glm::mat4 matrix4();
 
   /**
    * @brief 
@@ -126,17 +139,12 @@ public:
    * @return glm::mat4 
    *   world normal matrix
    */
-  glm::mat4 normalMatrix() const;
+  glm::mat4 normalMatrix();
 
   std::string m_Name;               //!< Name 
   ModelPtr m_Model;                 //!< Model
   ShaderPtr m_Shader;               //!< Shader
 
-  glm::vec3 m_ScaleVector;          //!< Scaling Vector
-  glm::vec3 m_Centroid;             //!< Position 
-  glm::vec3 m_RotationVector;       //!< Vector to rotate about
-
-  GLfloat m_RotationAngle;          //!< how much the object has been rotated 
   GLfloat m_RotationAmount;         //!< how to rotate the object per second
 
   Material m_Material;              //!< Material
@@ -149,11 +157,24 @@ public:
   GLint m_EyePositionUniform;       //!< Eye Position Uniform
 
   GLint m_AmbiantColorUniform;      //!< Ambiant Color Uniform
+  GLint m_DiffuseColorUniform;      //!< Color Uniform
+  GLint m_EmissiveColorUniform;      //!< Color Uniform
+  GLint m_SpecularColorUniform;      //!< Color Uniform
+
   bool m_DrawAABB;                  //!< Whether or not to draw AxisAlingedBoundingBox
   AxisAlingedBoundingBox m_AABB;
   bool m_DrawBoundingSphere;        //!< Whether or not to draw bounding spheres
   BoundingSphere m_BoundingSphere;
 private:
+  bool m_IsDirty;
+
+  glm::vec3 m_ScaleVector;          //!< Scaling Vector
+  glm::vec3 m_Centroid;             //!< Position 
+  glm::vec3 m_RotationVector;       //!< Vector to rotate about
+  GLfloat m_RotationAngle;          //!< how much the object has been rotated
+
+  glm::mat4 m_MVP;
+  glm::mat4 m_NormalMVP;
 };
 
 #endif

@@ -34,7 +34,10 @@ Object::Object(const char* name) :
   m_RotationAngle(0.0f),
   m_RotationAmount(0.0f),
   m_DrawAABB(false),
-  m_DrawBoundingSphere(true)
+  m_DrawBoundingSphere(false),
+  m_IsDirty(true),
+  m_MVP(),
+  m_NormalMVP()
 {
 }
 
@@ -72,17 +75,40 @@ void Object::SetShader(const ShaderPtr& shader)
 
   m_EyePositionUniform = glGetUniformLocation(shader->m_ProgramID, "EyePosition");
 
-  m_AmbiantColorUniform = glGetUniformLocation(shader->m_ProgramID, "AmbiantColor");
+  m_AmbiantColorUniform = glGetUniformLocation(shader->m_ProgramID, "AmbientColor");
+  m_DiffuseColorUniform = glGetUniformLocation(shader->m_ProgramID, "DiffuseColor");
+  m_EmissiveColorUniform = glGetUniformLocation(shader->m_ProgramID, "EmissiveColor");
+  m_SpecularColorUniform = glGetUniformLocation(shader->m_ProgramID, "SpecularColor");
 }
 
-glm::mat4 Object::matrix4(void) const 
+glm::mat4 Object::matrix4(void)
 {
-  return glm::translate(m_Centroid) *
-    glm::rotate(m_RotationAngle, m_RotationVector) *
-    glm::scale(m_ScaleVector);
+  if (m_IsDirty)
+  {
+    m_MVP = glm::translate(m_Centroid) *
+      glm::rotate(m_RotationAngle, m_RotationVector) *
+      glm::scale(m_ScaleVector);
+
+    m_NormalMVP = glm::transpose(glm::inverse(m_MVP));
+
+    m_IsDirty = false;
+  }
+
+  return m_MVP;
 }
 
-glm::mat4 Object::normalMatrix(void) const 
+glm::mat4 Object::normalMatrix(void)
 {
-  return glm::transpose(glm::inverse(matrix4()));
+  if (m_IsDirty)
+  {
+    m_MVP = glm::translate(m_Centroid) *
+      glm::rotate(m_RotationAngle, m_RotationVector) *
+      glm::scale(m_ScaleVector);
+
+    m_NormalMVP = glm::transpose(glm::inverse(m_MVP));
+
+    m_IsDirty = false;
+  }
+
+  return m_NormalMVP;
 }

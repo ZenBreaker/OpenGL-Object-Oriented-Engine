@@ -213,31 +213,37 @@ void Editor::PostRender()
 
         ImGui::Text("Object Variables");
         {
-          if (ImGui::DragFloat("Scale Vector", &light.m_ScaleVector.x))
+          float tempfloat = light.ScaleVector().x;
+          if (ImGui::DragFloat("Scale Vector", &tempfloat))
           {
-            glm::vec3 scale(light.m_ScaleVector);
-            scale.y = scale.x;
-            scale.z = scale.x;
+            light.SetScaleVector({ tempfloat, tempfloat, tempfloat });
           }
 
-          if (ImGui::DragFloat3("Position Vector", &light.m_Centroid[0]))
+          glm::vec3 tempVector = light.Centroid();
+
+          if (ImGui::DragFloat3("Position Vector", &tempVector[0]))
           {
+            light.SetCentroid(tempVector);
           }
 
-          if (ImGui::DragFloat("Rotation Angle", &light.m_RotationAngle))
+          tempfloat = light.RotationAngle();
+          if (ImGui::DragFloat("Rotation Angle", &tempfloat))
           {
+            light.SetRotationAngle(tempfloat);
           }
 
           if (ImGui::DragFloat("Rotation Amount", &light.m_RotationAmount))
           {
           }
 
-          if (ImGui::DragFloat3("Rotation Vector", &light.m_RotationVector[0]))
+          tempVector = light.RotationVector();
+          if (ImGui::DragFloat3("Rotation Vector", &tempVector[0]))
           {
+            light.SetRotationVector(tempVector);
           }
         }
-        
-        ImGui::Text("Light Variables");
+
+        ImGui::Text("Light Variables"); 
         {
           bool has_changed = false;
           int& currentindex = light.m_Light->type;
@@ -271,18 +277,21 @@ void Editor::PostRender()
           {
           case 0: // point
           {
-            ImGui::DragFloat3("Position", &light.m_Centroid.x);
+            //ImGui::DragFloat3("Position", &light.m_Centroid.x);
             break;
           }
           case 1: // spotlight
           {
-            ImGui::DragFloat3("Position", &light.m_Centroid.x);
-            ImGui::DragFloat3("Rotation Vector", &light.m_RotationVector.x);
+            //ImGui::DragFloat3("Position", &light.m_Centroid.x);
+            //ImGui::DragFloat3("Rotation Vector", &light.m_RotationVector.x);
 
-            float angledegress = glm::degrees(light.m_RotationAngle);
+            float angledegress = light.RotationAngle();
+            angledegress = glm::degrees(angledegress);
             if (ImGui::DragFloat("Rotation Angle", &angledegress))
             {
-              light.m_RotationAngle = angledegress;
+              // not sure using deg or rad internally
+              angledegress = glm::radians(angledegress);
+              light.SetRotationAngle(angledegress);
             }
 
             angledegress = glm::degrees(light.m_Light->InnerAngle);
@@ -302,12 +311,19 @@ void Editor::PostRender()
           }
           case 2: //direction
           {
-            ImGui::DragFloat3("Rotation Vector", &light.m_RotationVector.x);
+            glm::vec3 rotVec = light.RotationVector();
+            if(ImGui::DragFloat3("Rotation Vector", &rotVec.x))
+            {
+              light.SetRotationVector(rotVec);
+            }
 
-            float angledegress = glm::degrees(light.m_RotationAngle);
+            float angledegress = light.RotationAngle();
+            angledegress = glm::degrees(angledegress);
             if (ImGui::DragFloat("Rotation Angle", &angledegress))
             {
-              light.m_RotationAngle = angledegress;
+              // not sure using deg or rad internally
+              angledegress = glm::radians(angledegress);
+              light.SetRotationAngle(angledegress);
             }
             break;
           }
@@ -317,7 +333,6 @@ void Editor::PostRender()
           }
           }
         }
-
         ImGui::TreePop();
       }
     }
@@ -411,27 +426,35 @@ void Editor::PostRender()
 
         ImGui::Text("Object Variables");
         {
-          if (ImGui::DragFloat("Scale Vector", &object.m_ScaleVector.x))
+          glm::vec3 tempVector;
+          float tempfloat;
+
+          tempfloat = object.ScaleVector().x;
+          if (ImGui::DragFloat("Scale Vector", &tempfloat))
           {
-            glm::vec3& scale(object.m_ScaleVector);
-            scale.y = scale.x;
-            scale.z = scale.x;
+            object.SetScaleVector({ tempfloat, tempfloat, tempfloat });
           }
 
-          if (ImGui::DragFloat3("Position Vector", &object.m_Centroid[0]))
+          tempVector = object.Centroid();
+          if (ImGui::DragFloat3("Position Vector", &tempVector[0]))
           {
+            object.SetCentroid(tempVector);
           }
 
-          if (ImGui::DragFloat("Rotation Angle", &object.m_RotationAngle))
+          tempfloat = object.RotationAngle();
+          if (ImGui::DragFloat("Rotation Angle", &tempfloat))
           {
+            object.SetRotationAngle(tempfloat);
           }
 
           if (ImGui::DragFloat("Rotation Amount", &object.m_RotationAmount))
           {
           }
 
-          if (ImGui::DragFloat3("Rotation Vector", &object.m_RotationVector[0]))
+          tempVector = object.RotationVector();
+          if (ImGui::DragFloat3("Rotation Vector", &tempVector[0]))
           {
+            object.SetRotationVector(tempVector);
           }
         }
 
@@ -442,6 +465,22 @@ void Editor::PostRender()
           }
 
           if (ImGui::ColorEdit3("Ambiant Color", &object.m_Material.ambiant_color[0]))
+          {
+          }
+
+          if (ImGui::ColorEdit3("diffuse Color", &object.m_Material.diffuse_color[0]))
+          {
+          }
+
+          if (ImGui::ColorEdit3("specular Color", &object.m_Material.specular_color[0]))
+          {
+          }
+
+          if (ImGui::DragFloat("specular exponent", &object.m_Material.specular_exponent))
+          {
+          }
+
+          if (ImGui::ColorEdit3("emissive Color", &object.m_Material.emissive_color[0]))
           {
           }
         }

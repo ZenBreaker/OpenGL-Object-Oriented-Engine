@@ -44,10 +44,10 @@ std::vector<std::string> Model::IndexNames
 
 
 /**
- * @brief 
+ * @brief
  *   Default constructor for a new Model object
- * 
- * @param index 
+ *
+ * @param index
  *   Index of model to create
  */
 Model::Model(Index index)
@@ -60,7 +60,7 @@ Model::Model(Index index)
 }
 
 /**
- * @brief 
+ * @brief
  *   Destructure for the Model object
  */
 Model::~Model()
@@ -69,12 +69,12 @@ Model::~Model()
 }
 
 /**
- * @brief 
+ * @brief
  *   Move constructor for a Model object
- * 
- * @param rhs 
+ *
+ * @param rhs
  *   Model to copy over
- * 
+ *
  * @return Model&
  *   Model reference
  */
@@ -98,7 +98,7 @@ Model& Model::operator=(Model&& rhs) noexcept
 }
 
 /**
- * @brief 
+ * @brief
  *   Cleanup the model, destructing
  */
 void Model::CleanUp()
@@ -113,7 +113,7 @@ void Model::CleanUp()
 }
 
 /**
- * @brief 
+ * @brief
  *   Set member variables to zero
  */
 void Model::SetZero()
@@ -129,10 +129,10 @@ void Model::SetZero()
 }
 
 /**
- * @brief 
+ * @brief
  *   Model Parsing for ".obj"
- * 
- * @param filename 
+ *
+ * @param filename
  *   file name to load
  */
 void Model::ParseModel(const char* filename)
@@ -155,7 +155,7 @@ void Model::ParseModel(const char* filename)
         switch (line[1]) // check for the second letter is
         {
           // if its just a vertex
-        case ' ': 
+        case ' ':
         case '\t':
         {
           // temp x, y and z for sscanf to fill
@@ -169,9 +169,9 @@ void Model::ParseModel(const char* filename)
           m_Vertices.emplace_back(x, y, z);
 
           // check if point is a max point
-          if (max.x < m_Vertices.back().x) 
-          { 
-            max.x = m_Vertices.back().x; 
+          if (max.x < m_Vertices.back().x)
+          {
+            max.x = m_Vertices.back().x;
           }
           if (max.y < m_Vertices.back().y)
           {
@@ -214,7 +214,7 @@ void Model::ParseModel(const char* filename)
         break;
       }
       // if its a face
-      case 'f': 
+      case 'f':
       {
         // temp values for sscanf to fill
         int a1, a2, a3, a4;
@@ -231,7 +231,7 @@ void Model::ParseModel(const char* filename)
           m_Indices.push_back(a3 - 1);
           break;
         }
-          // Two Triangles
+        // Two Triangles
         case 4:
         {
           m_Indices.push_back(a1 - 1); // Triangle 1
@@ -317,8 +317,8 @@ void Model::ParseModel(const char* filename)
 }
 
 /**
- * @brief 
- *   Generate Buffers for the models for shader to use 
+ * @brief
+ *   Generate Buffers for the models for shader to use
  */
 void Model::GenerateBuffers()
 {
@@ -338,15 +338,28 @@ void Model::GenerateBuffers()
   glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(glm::vec3),
     m_Vertices.data(), GL_STATIC_DRAW);
 
+  // enable vertex positions
+  glEnableVertexAttribArray(0);
+  //glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
   // bind vertex normals
   glGenBuffers(1, &m_VNBO);
   glBindBuffer(GL_ARRAY_BUFFER, m_VNBO);
   glBufferData(GL_ARRAY_BUFFER, m_VertexNormals.size() * sizeof(glm::vec3),
     m_VertexNormals.data(), GL_STATIC_DRAW);
 
+  // enable vertex normals
+  glEnableVertexAttribArray(1);
+  //glBindBuffer(GL_ARRAY_BUFFER, m_VNBO);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
   // bind vertex indices
   glGenBuffers(1, &m_EBO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(glm::uint),
     m_Indices.data(), GL_STATIC_DRAW);
+
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

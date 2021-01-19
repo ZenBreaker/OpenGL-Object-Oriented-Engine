@@ -21,9 +21,15 @@ End Header --------------------------------------------------------*/
 #version 330 core
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
-layout (location = 2) out vec4 gAlbedoSpec;
+layout (location = 2) out vec3 gDiffuse;
+layout (location = 3) out vec4 gSpecular;
+layout (location = 4) out vec3 gEmissive;
+layout (location = 5) out vec3 gAmbient;
 
-uniform vec3  AmbiantColor;
+uniform vec3  AmbientColor;
+uniform vec4  SpecularColor;
+uniform vec3  DiffuseColor;
+uniform vec3  EmissiveColor;
 
 in vec3 FragPos;
 in vec3 Normal;
@@ -35,5 +41,9 @@ void main()
     // also store the per-fragment normals into the gbuffer
     gNormal = normalize(Normal);
     // and the diffuse per-fragment color
-    gAlbedoSpec = vec4(AmbiantColor, 1.0);
+
+    gDiffuse = DiffuseColor;
+    gSpecular = SpecularColor;
+    gAmbient = AmbientColor;
+    gEmissive = EmissiveColor;
 }

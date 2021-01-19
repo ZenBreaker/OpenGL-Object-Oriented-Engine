@@ -32,7 +32,10 @@ enum GeometryBuffer
   All,
   Position,
   Normal,
-  AlbedoSpec,
+  Diffuse,
+  Ambient,
+  Specular,
+  Emissive,
 };
 
 // String version of Geometry Buffer
@@ -41,7 +44,10 @@ static const char* const GeometryBufferNames[] =
   "All",
   "Position",
   "Normal",
-  "AlbedoSpec",
+  "Diffuse",
+  "Ambient",
+  "Specular",
+  "Emissive",
 };
 
 /**
@@ -89,13 +95,13 @@ public:
   void Shutdown();
 
   // Pre Renders the scene, does first pass of deferred shading
-  void PreRender(const Scene* scene);
+  void PreRender(Scene* scene);
 
   // Renders the scene, does the second pass of deferred shading
   void Render(const Scene* scene);
 
   // Renders the scene, renders forward objects, like light positions
-  void PostRender(const Scene* scene);
+  void PostRender(Scene* scene);
 
   GLuint m_SSBOUniform; //!< SSBO uniform location
   LightData m_Lights;   //!< light data 
@@ -107,7 +113,7 @@ public:
 
 private:
   // Render a single object into the current framebuffer
-  void RenderObject(const Scene* scene, const Object& object, GLuint& lastBindedProgramID);
+  void RenderObject(const Scene* scene, Object& object, GLuint& lastBindedProgramID);
   
   // Render a full screen quad
   void RenderQuad() const;
@@ -117,12 +123,18 @@ private:
   GLuint m_GeometryBuffer;          //!< geometry framebuffer
   GLuint m_GeometryPosition;        //!< position texture
   GLuint m_GeometryNormal;          //!< normal texture
-  GLuint m_GeometryAlbedoSpec;      //!< color texture
+  GLuint m_GeometryDiffuse;      //!< color texture
+  GLuint m_GeometrySpecular;      //!< color texture
+  GLuint m_GeometryEmissive;      //!< color texture
+  GLuint m_GeometryAmbient;      //!< color texture
   GLuint m_RenderBufferObjectDepth; //!< render buffer object for depth
 
   GLuint m_GeometryPositionUniform;   //!< position uniform location
   GLuint m_GeometryNormalUniform;     //!< normal uniform location
-  GLuint m_GeometryAlbedoSpecUniform; //!< color uniform location
+  GLuint m_GeometryDiffuseUniform; //!< color uniform location
+  GLuint m_GeometrySpecularUniform; //!< color uniform location
+  GLuint m_GeometryAmbientUniform; //!< color uniform location
+  GLuint m_GeometryEmissiveUniform; //!< color uniform location
 
   GLuint m_FullQuadVAO = 0; //!< screen quad VAO
   GLuint m_FullQuadVBO;     //!< screen quad VBO

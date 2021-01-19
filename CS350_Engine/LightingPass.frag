@@ -23,9 +23,13 @@ out vec4 FragColor;
 
 in vec2 TexCoords;
 
+
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
-uniform sampler2D gAlbedoSpec;
+uniform sampler2D gDiffuse;
+uniform sampler2D gAmbient;
+uniform sampler2D gEmissive;
+uniform sampler2D gSpecular;
 
 struct Light
 {
@@ -67,36 +71,76 @@ uniform vec4 EyePosition;
 
 void main()
 {             
-    // retrieve data from gbuffer
-    vec3 FragPos = texture(gPosition, TexCoords).rgb;
-    vec3 Normal = texture(gNormal, TexCoords).rgb;
-    vec3 Diffuse = texture(gAlbedoSpec, TexCoords).rgb;
-    float Specular = texture(gAlbedoSpec, TexCoords).a;
+  // retrieve data from gbuffer
+  vec3 FragPos = texture(gPosition, TexCoords).rgb;
+  if(length(FragPos) > 1000)
+	{
+		discard;
+	}
+
+
+  vec3 Normal = texture(gNormal, TexCoords).rgb;
+
+	const float PI = 3.14159f;
+
+	float SpecularExponent = texture(gSpecular, TexCoords).a;
+
+	vec3 DiffuseColor = texture(gDiffuse, TexCoords).rgb;
+  vec3 SpecularColor = texture(gSpecular, TexCoords).rgb;
+	vec3 Emissive = texture(gEmissive, TexCoords).rgb;
+	vec3 AmbiantColor = texture(gAmbient, TexCoords).rgb;
+	vec3 LightGlobalAmbiant = GlobalAmbient * AmbiantColor;
+	vec3 LightLocal = LightGlobalAmbiant.xyz;
+
     
-    // then calculate lighting as usual
-    vec3 lighting  = Diffuse * 0.1; // hard-coded ambient component
-    vec3 viewDir  = normalize(EyePosition.xyz - FragPos);
-    for(int i = 0; i < numberOfLights; ++i)
-    {
-        // calculate distance between light source and current fragment
-        float dl = length(lights[i].position - FragPos);
-		float maxBrightness = max(max(lights[i].ambiant.r, lights[i].ambiant.g), lights[i].ambiant.b);
-		float radius = (-linear + sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
-        if(dl < radius)
-        {
-            // diffuse
-            vec3 lightDir = normalize(lights[i].position - FragPos);
-            vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * lights[i].diffuse;
-            // specular
-            vec3 halfwayDir = normalize(lightDir + viewDir);  
-            float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
-            vec3 specular = lights[i].specular * spec * Specular;
-            // attenuation
-            float attenuation = 1.0 / (1.0 + linear * dl + quadratic * dl * dl);
-            diffuse *= attenuation;
-            specular *= attenuation;
-            lighting += diffuse + specular;
-        }
-    }    
-    FragColor = vec4(lighting, 1.0);
+    
+	float debug0 = 0.0;
+	float debug1 = 0.0;
+	float debug3 = 0.0;
+
+	for(int i = 0; i <  numberOfLights; ++i)
+	{
+		Light light = lights[i];
+		vec3 L = normalize(light.position - FragPos.xyz);
+		vec3 m = normalize(Normal.xyz);
+		vec3 v = normalize(FragPos.xyz - EyePosition.xyz);
+		float dl = distance(light.position.xyz, FragPos.xyz);
+		if(light.type == 2) //direction
+		{
+			L = -light.direction;
+			dl = 0.0;
+		}
+		float N_dot_L = max(0.0, dot(m,L));
+		vec3 Rl = 2.0 * N_dot_L * m - L;
+		debug0 = dl;
+		float Attenuation = min(1.0, 1.0 / (constant + linear * dl + quadratic * dl * dl));
+		
+		float SpotLightEffect = 1;
+
+		if(light.type == 1)
+		{
+			float Alpha = max(0.0, dot(L, -light.direction));
+			float Phi = light.OuterAngle;
+			float Theta = light.InnerAngle;
+		
+			SpotLightEffect = max(0.0, pow((Alpha - cos(Phi))/(cos(Theta) - cos(Phi)), light.falloff));
+		}
+
+		float spec_angle = max(0.0, dot(Rl,v)); //* smoothstep(0.0, 0.1, N_dot_L);
+		//spec_angle = distance(FragPos.xyz, EyePosition.xyz);
+		
+		vec3 LocalAmbient = AmbiantColor * light.ambiant;
+		vec3 LocalDiffuse = DiffuseColor * N_dot_L * light.diffuse;
+		vec3 LocalSpecular = max(pow(spec_angle, SpecularExponent) * light.specular.xyz * SpecularColor.xyz, vec3(0.0));
+
+		vec3 TotalAmbient = Attenuation * LocalAmbient;
+		vec3 TotalDiffuseSpecular = Attenuation * SpotLightEffect * (LocalDiffuse.xyz + LocalSpecular.xyz);
+
+		LightLocal += (TotalAmbient + TotalDiffuseSpecular) * 0.000001 + spec_angle;
+	}
+
+	float S = max(0.0, min(1.0, (ZFar - distance(FragPos.xyz, EyePosition.xyz)) / (ZFar - ZNear)));
+
+	FragColor = vec4(S * LightLocal + (1 - S) * IFog.xyz, 1.0);
+	FragColor = vec4(LightLocal, 1.0);
 }

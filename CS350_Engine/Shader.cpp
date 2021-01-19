@@ -36,10 +36,26 @@ Shader::Shader(ShaderIndex index)
 
 GLuint Shader::LoadShaders(const char* vertex_file_path, const char* fragment_file_path)
 {
+    {
+      GLenum error_out;
+      while ((error_out = glGetError()) != GL_NO_ERROR)
+      {
+        __debugbreak();
+        printf("oof %i", error_out);
+      }
+    }
+
   // Create the shaders
   GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
   GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // Read the Vertex Shader code from the file
   std::string VertexShaderCode;
   std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
@@ -68,7 +84,14 @@ GLuint Shader::LoadShaders(const char* vertex_file_path, const char* fragment_fi
   GLint Result = GL_FALSE;
   int InfoLogLength;
 
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // Compile Vertex Shader
   printf("Compiling shader : %s\n", vertex_file_path);
   char const* VertexSourcePointer = VertexShaderCode.c_str();
@@ -83,7 +106,14 @@ GLuint Shader::LoadShaders(const char* vertex_file_path, const char* fragment_fi
     glGetShaderInfoLog(VertexShaderID, InfoLogLength, nullptr, &VertexShaderErrorMessage[0]);
     printf("%s\n", &VertexShaderErrorMessage[0]);
   }
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
 
   // Compile Fragment Shader
   printf("Compiling shader : %s\n", fragment_file_path);
@@ -99,7 +129,14 @@ GLuint Shader::LoadShaders(const char* vertex_file_path, const char* fragment_fi
     glGetShaderInfoLog(FragmentShaderID, InfoLogLength, nullptr, &FragmentShaderErrorMessage[0]);
     printf("%s\n", &FragmentShaderErrorMessage[0]);
   }
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
 
   // Link the program
   printf("Linking program\n");
@@ -107,7 +144,14 @@ GLuint Shader::LoadShaders(const char* vertex_file_path, const char* fragment_fi
   glAttachShader(ProgramID, VertexShaderID);
   glAttachShader(ProgramID, FragmentShaderID);
   glLinkProgram(ProgramID);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // Check the program
   glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
   glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
@@ -116,13 +160,27 @@ GLuint Shader::LoadShaders(const char* vertex_file_path, const char* fragment_fi
     glGetProgramInfoLog(ProgramID, InfoLogLength, nullptr, &ProgramErrorMessage[0]);
     printf("%s\n", &ProgramErrorMessage[0]);
   }
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
 
   glDetachShader(ProgramID, VertexShaderID);
   glDetachShader(ProgramID, FragmentShaderID);
 
   glDeleteShader(VertexShaderID);
   glDeleteShader(FragmentShaderID);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   return ProgramID;
 }

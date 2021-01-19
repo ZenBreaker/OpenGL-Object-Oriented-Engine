@@ -72,20 +72,67 @@ void Debug::Init()
   // generate vao and buffers
   glGenVertexArrays(1, &m_VAO);
   glGenBuffers(1, &m_VBO);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   glGenBuffers(1, &m_EBOStatic3DRect);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBOStatic3DRect);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, BoxIndices.size() * sizeof(unsigned int), BoxIndices.data(), GL_STREAM_DRAW);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   auto sphere = Engine::get().m_AssetManager.GetModel(Model::Sphere);
   glGenBuffers(1, &m_EBOStaticSphere);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBOStaticSphere);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphere->m_Indices.size() * sizeof(unsigned int), sphere->m_Indices.data(), GL_STREAM_DRAW);
-
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // get uniforms from debug shader
   m_ViewUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::ColorShader)->m_ProgramID, "ViewMatrix");
+  
+      {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   m_PerspectiveUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::ColorShader)->m_ProgramID, "PerspectiveMatrix");
+  
+      {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   m_ModelUniform = glGetUniformLocation(Engine::get().m_AssetManager.GetShader(ShaderIndex::ColorShader)->m_ProgramID, "ModelMatrix");
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
 }
 
 /**

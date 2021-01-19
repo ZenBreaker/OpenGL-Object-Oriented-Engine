@@ -47,6 +47,17 @@ static const char* const ShaderNames[] =
   "TextureShader",
 };
 
+static bool const ShaderHasLights[] =
+{
+  false,
+  false,
+  false,
+  true,
+  false,
+  true,
+  false,
+};
+
 class Shader
 {
 public:

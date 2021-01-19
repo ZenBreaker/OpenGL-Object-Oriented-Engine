@@ -85,17 +85,42 @@ ShaderPtr AssetManager::GetShader(ShaderIndex index)
   if (m_Shaders.find(ShaderNames[index]) == m_Shaders.end())
   {
     m_Shaders.emplace(ShaderNames[index], new Shader(index)); // load shader
+    {
+      GLenum error_out;
+      while ((error_out = glGetError()) != GL_NO_ERROR)
+      {
+        __debugbreak();
+        printf("oof %i", error_out);
+      }
+    }
 
-    // temp block index and attach light data to the shader
-    GLuint Local_block_index = 0;
-    Local_block_index = glGetProgramResourceIndex(m_Shaders[ShaderNames[index]]->m_ProgramID, GL_SHADER_STORAGE_BLOCK, "LightData");
-
-    // attach ssbo to the shader
-    GLuint ssbo_binding_point_index = 0;
-    glShaderStorageBlockBinding(m_Shaders[ShaderNames[index]]->m_ProgramID, Local_block_index, ssbo_binding_point_index);
-
-    // save the SSBO uniform
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, ssbo_binding_point_index, Engine::get().m_RenderingManager.m_SSBOUniform);
+    if(ShaderHasLights[index])
+    {
+      // temp block index and attach light data to the shader
+      GLuint Local_block_index = 0;
+      Local_block_index = glGetProgramResourceIndex(m_Shaders[ShaderNames[index]]->m_ProgramID, GL_SHADER_STORAGE_BLOCK, "LightData");
+      {
+        GLenum error_out;
+        while ((error_out = glGetError()) != GL_NO_ERROR)
+        {
+          __debugbreak();
+          printf("oof %i", error_out);
+        }
+      }
+      // attach ssbo to the shader
+      GLuint ssbo_binding_point_index = 0;
+      glShaderStorageBlockBinding(m_Shaders[ShaderNames[index]]->m_ProgramID, Local_block_index, ssbo_binding_point_index);
+      {
+        GLenum error_out;
+        while ((error_out = glGetError()) != GL_NO_ERROR)
+        {
+          __debugbreak();
+          printf("oof %i", error_out);
+        }
+      }
+      // save the SSBO uniform
+      glBindBufferBase(GL_SHADER_STORAGE_BUFFER, ssbo_binding_point_index, Engine::get().m_RenderingManager.m_SSBOUniform);
+    }
   }
 
   return m_Shaders[ShaderNames[index]]; // returns the shader
