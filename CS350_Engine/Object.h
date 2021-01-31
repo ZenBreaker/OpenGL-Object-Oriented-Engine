@@ -149,6 +149,12 @@ public:
    */
   glm::mat4 normalMatrix();
 
+  void DrawFaceNormals();
+  bool m_DrawFaceNormals;
+
+  void DrawVertexNormals();
+  bool m_DrawVertexNormals;
+
   std::string m_Name;               //!< Name 
   ModelPtr m_Model;                 //!< Model
   ShaderPtr m_Shader;               //!< Shader
@@ -162,7 +168,6 @@ public:
   GLint m_ViewMatrixUniform;        //!< View Matrix Uniform
   GLint m_ModelMatrixUniform;       //!< Model Matrix Uniform
   GLint m_NormalMatrixUniform;      //!< Normal Matrix Uniform
-  GLint m_EyePositionUniform;       //!< Eye Position Uniform
 
   GLint m_AmbiantColorUniform;      //!< Ambiant Color Uniform
   GLint m_DiffuseColorUniform;      //!< Color Uniform
@@ -173,6 +178,7 @@ public:
   AxisAlingedBoundingBox m_AABB;
   bool m_DrawBoundingSphere;        //!< Whether or not to draw bounding spheres
   BoundingSphere m_BoundingSphere;
+  bool m_IsRotating;
 private:
   bool m_IsDirty;
 

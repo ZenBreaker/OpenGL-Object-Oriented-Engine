@@ -84,7 +84,8 @@ void main()
 	const float PI = 3.14159f;
 
 	float SpecularExponent = texture(gSpecular, TexCoords).a;
-
+	SpecularExponent *= 6;
+	SpecularExponent *= SpecularExponent * SpecularExponent;
 	vec3 DiffuseColor = texture(gDiffuse, TexCoords).rgb;
   vec3 SpecularColor = texture(gSpecular, TexCoords).rgb;
 	vec3 Emissive = texture(gEmissive, TexCoords).rgb;
@@ -112,6 +113,7 @@ void main()
 		}
 		float N_dot_L = max(0.0, dot(m,L));
 		vec3 Rl = 2.0 * N_dot_L * m - L;
+		Rl *= -1;
 		debug0 = dl;
 		float Attenuation = min(1.0, 1.0 / (constant + linear * dl + quadratic * dl * dl));
 		
@@ -126,7 +128,7 @@ void main()
 			SpotLightEffect = max(0.0, pow((Alpha - cos(Phi))/(cos(Theta) - cos(Phi)), light.falloff));
 		}
 
-		float spec_angle = max(0.0, dot(Rl,v)); //* smoothstep(0.0, 0.1, N_dot_L);
+		float spec_angle = max(0.0, dot(Rl,v)) * smoothstep(0.0, 0.1, N_dot_L);
 		//spec_angle = distance(FragPos.xyz, EyePosition.xyz);
 		
 		vec3 LocalAmbient = AmbiantColor * light.ambiant;
@@ -136,11 +138,12 @@ void main()
 		vec3 TotalAmbient = Attenuation * LocalAmbient;
 		vec3 TotalDiffuseSpecular = Attenuation * SpotLightEffect * (LocalDiffuse.xyz + LocalSpecular.xyz);
 
-		LightLocal += (TotalAmbient + TotalDiffuseSpecular) * 0.000001 + spec_angle;
+		LightLocal += (TotalAmbient + TotalDiffuseSpecular);//* 0.000001;
+		//LightLocal += spec_angle;
 	}
 
 	float S = max(0.0, min(1.0, (ZFar - distance(FragPos.xyz, EyePosition.xyz)) / (ZFar - ZNear)));
 
 	FragColor = vec4(S * LightLocal + (1 - S) * IFog.xyz, 1.0);
-	FragColor = vec4(LightLocal, 1.0);
+	FragColor = vec4(LightLocal, 1.0) + vec4(0.0,0.0,0.0,0.0);
 }

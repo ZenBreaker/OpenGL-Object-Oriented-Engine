@@ -66,8 +66,11 @@ public:
   ShaderIndex m_Index;
   GLuint m_ProgramID;
 
+  static GLuint LoadMultiShaders(const char* vertex_file_path, const char* fragment_file_path, const char* geom_file_path);
 private:
   GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
+  // Load shaders where multiple shader files == one complete shader
+// Show how code can be reused across shaders
 };
 
 using ShaderPtr = std::shared_ptr<Shader>;

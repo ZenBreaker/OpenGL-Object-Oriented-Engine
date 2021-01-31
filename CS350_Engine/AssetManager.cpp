@@ -125,3 +125,26 @@ ShaderPtr AssetManager::GetShader(ShaderIndex index)
 
   return m_Shaders[ShaderNames[index]]; // returns the shader
 }
+
+ShaderPtr AssetManager::ReloadShader(ShaderIndex index)
+{
+  // checks if the shader has already been loaded
+  if (m_Shaders.find(ShaderNames[index]) != m_Shaders.end())
+  {
+    m_Shaders.erase(ShaderNames[index]);
+    {
+      GLenum error_out;
+      while ((error_out = glGetError()) != GL_NO_ERROR)
+      {
+        __debugbreak();
+        printf("oof %i", error_out);
+      }
+    }
+  }
+  else
+  {
+    printf("shader not loaded beforehand");
+  }
+
+  return GetShader(index);
+}

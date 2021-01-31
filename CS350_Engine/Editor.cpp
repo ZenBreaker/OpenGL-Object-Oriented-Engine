@@ -136,6 +136,10 @@ void Editor::PostRender()
     }
   }
 
+
+
+  if (ImGui::ColorEdit3("Background Color", &Engine::get().m_RenderingManager.m_BackgroundColor[0])) {}
+
   if(ImGui::Checkbox("Depth Copy", &Engine::get().m_RenderingManager.m_DepthCopy)) {}
 
   if(ImGui::TreeNode("Camera"))
@@ -150,7 +154,11 @@ void Editor::PostRender()
 
   if(ImGui::Checkbox("Bounding Hierarchy", &Engine::get().m_SceneManager.m_CurrentScene->m_IsDrawingBoundingHierarchy))
   {
-    
+  }
+
+  if (ImGui::Button("Reload Light Shader"))
+  {
+    Engine::get().m_RenderingManager.ReloadShader(ShaderIndex::LightingPass);
   }
 
   if (ImGui::TreeNode("Lights"))
@@ -162,6 +170,10 @@ void Editor::PostRender()
 
       if (ImGui::TreeNode(&light, "Light Object: [%i]", i))
       {
+        if (ImGui::Checkbox("Rotates", &light.m_IsRotating))
+        {
+
+        }
         //if (ImGui::TreeNode("Model"))
         {
           bool has_changed = false;
@@ -367,6 +379,10 @@ void Editor::PostRender()
     ImGui::TreePop();
   }
 
+  if (ImGui::ColorEdit3("Debug Normal Face Color", &Engine::get().m_RenderingManager.m_NormalColorFace[0])){}
+  if (ImGui::ColorEdit3("Debug Normal Vertex Color", &Engine::get().m_RenderingManager.m_NormalColorVertex[0])) { }
+  if (ImGui::DragFloat("Debug Normal Length", &Engine::get().m_RenderingManager.m_NormalLength)) { }
+
   if (ImGui::TreeNode("Objects"))
   {
     // loop through all objects
@@ -376,6 +392,13 @@ void Editor::PostRender()
 
       if (ImGui::TreeNode(&object, "Object: [%i]", i))
       {
+        if (ImGui::Checkbox("Draw Vertex Normals", &object.m_DrawVertexNormals))
+        {
+        }
+        if (ImGui::Checkbox("Draw Face Normals", &object.m_DrawFaceNormals))
+        {
+        }
+
         //if (ImGui::TreeNode("Model"))
         {
           bool has_changed = false;

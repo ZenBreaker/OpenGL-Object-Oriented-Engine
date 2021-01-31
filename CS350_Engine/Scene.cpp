@@ -48,6 +48,7 @@ Scene::Scene(SceneIndex number)
     object1.m_Material.ambiant_color = glm::vec3(1.0f, 0.3f, 1.0f);
 
     Object& object2 = AddObject();
+    //object2.SetScaleVector({ 0,0,0 });
     object2.m_Model = Engine::get().m_AssetManager.GetModel(Model::Sphere);
     object2.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object2.SetCentroid(glm::vec3(2.17f, -0.590f, 0.51f));
@@ -55,18 +56,20 @@ Scene::Scene(SceneIndex number)
 
 
     Object& object3 = AddObject();
+    //object3.SetScaleVector({ 0,0,0 });
     object3.m_Model = Engine::get().m_AssetManager.GetModel(Model::FourSphere);
     object3.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object3.SetCentroid(glm::vec3(-1.690f, 0.88f, -0.870f));
     object3.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 0.0f);
 
     Object& object4 = AddObject();
+    //object4.SetScaleVector({ 0,0,0 });
     object4.m_Model = Engine::get().m_AssetManager.GetModel(Model::BunnyHighPoly);
     object4.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object4.SetCentroid(glm::vec3(-0.60f, -0.430f, 0.310f));
     object4.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 6; i++)
     {
       float hue = 360.0f * ((float)rand() / (float)RAND_MAX - 0.5f) * 8;
       Object& light1 = AddLight();
@@ -80,6 +83,7 @@ Scene::Scene(SceneIndex number)
       light1.m_Light->ambiant = glm::rgbColor(glm::vec3(hue, 1.0f, 0.5f));
       light1.m_Light->diffuse = glm::rgbColor(glm::vec3(hue, 1.0f, 1.0f));
       light1.m_Light->type = 0;
+      light1.m_IsRotating = true;
     }
     
     break;

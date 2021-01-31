@@ -22,6 +22,10 @@ End Header --------------------------------------------------------*/
 
 #include "Engine.h"
 
+// initialized default in main
+extern int windowWidth;
+extern int windowHeight;
+
 static Engine* s_Engine = nullptr; //!< engine pointer
 
 /**
@@ -201,10 +205,17 @@ void Engine::PreRender()
     return;
   }
 
-  // resize viewport
-  glViewport(0, 0, width, height);
-  m_Width = width;
-  m_Height = height;
+  if(m_Width != width || m_Height != height)
+  {
+    // resize viewport
+    glViewport(0, 0, width, height);
+    m_Width = width;
+    m_Height = height;
+    windowWidth = m_Width;
+    windowHeight = m_Height;
+    m_RenderingManager.GenerateGeometryBuffers(m_Width, m_Height);
+
+  }
 
   // calculate delta time from last frame
   float currentFrame = (float)glfwGetTime();

@@ -52,6 +52,8 @@ public:
   // Getter for the all shaders that can be loaded for the project
   ShaderPtr GetShader(ShaderIndex index);
 
+  ShaderPtr ReloadShader(ShaderIndex index);
+
   /**
    * @brief 
    *   Getter for the map of models that are loaded

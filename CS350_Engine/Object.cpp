@@ -38,7 +38,10 @@ Object::Object(const char* name) :
   m_DrawBoundingSphere(false),
   m_IsDirty(true),
   m_MVP(),
-  m_NormalMVP()
+  m_NormalMVP(),
+  m_IsRotating(false),
+  m_DrawVertexNormals(false),
+  m_DrawFaceNormals(false)
 {
 }
 
@@ -50,7 +53,10 @@ Object::~Object()
 
 void Object::Update(float deltaTime)
 {
-  m_RotationAngle += m_RotationAmount * deltaTime;
+  if(m_IsRotating)
+  {
+    m_RotationAngle += m_RotationAmount * deltaTime;
+  }
 
   if (m_DrawAABB) 
   {
@@ -73,8 +79,6 @@ void Object::SetShader(const ShaderPtr& shader)
   m_ViewMatrixUniform = glGetUniformLocation(shader->m_ProgramID, "ViewMatrix");
   m_ModelMatrixUniform = glGetUniformLocation(shader->m_ProgramID, "ModelMatrix");
   m_NormalMatrixUniform = glGetUniformLocation(shader->m_ProgramID, "NormalMatrix");
-
-  m_EyePositionUniform = glGetUniformLocation(shader->m_ProgramID, "EyePosition");
 
   m_AmbiantColorUniform = glGetUniformLocation(shader->m_ProgramID, "AmbientColor");
   m_DiffuseColorUniform = glGetUniformLocation(shader->m_ProgramID, "DiffuseColor");
@@ -112,4 +116,15 @@ glm::mat4 Object::normalMatrix(void)
   }
 
   return m_NormalMVP;
+}
+
+
+void Object::DrawFaceNormals()
+{
+
+}
+
+void Object::DrawVertexNormals()
+{
+
 }

@@ -88,6 +88,8 @@ public:
    */
   ~RenderingManager() { Shutdown(); }
 
+  void GenerateGeometryBuffers(int width, int height);
+  void LoadDebugShader();
   // initialize for the Rendering Manager
   void Init();
 
@@ -103,6 +105,9 @@ public:
   // Renders the scene, renders forward objects, like light positions
   void PostRender(Scene* scene);
 
+  void ReloadShader(ShaderIndex index);
+
+
   GLuint m_SSBOUniform; //!< SSBO uniform location
   LightData m_Lights;   //!< light data 
   GeometryBuffer m_FSQ; //!< what Geometry buffer to draw
@@ -111,9 +116,14 @@ public:
   glm::mat4 m_Projection; //!< projection matrix
   glm::mat4 m_View;       //!< view matrix 
 
+  glm::vec3 m_NormalColorVertex;
+  glm::vec3 m_NormalColorFace;
+  float m_NormalLength;
+  glm::vec3 m_BackgroundColor;
 private:
   // Render a single object into the current framebuffer
   void RenderObject(const Scene* scene, Object& object, GLuint& lastBindedProgramID);
+  void RenderNormals(const Scene* scene, Object& object, GLuint& lastBindedProgramID);
   
   // Render a full screen quad
   void RenderQuad() const;
@@ -134,10 +144,20 @@ private:
   GLuint m_GeometryDiffuseUniform; //!< color uniform location
   GLuint m_GeometrySpecularUniform; //!< color uniform location
   GLuint m_GeometryAmbientUniform; //!< color uniform location
-  GLuint m_GeometryEmissiveUniform; //!< color uniform location
+  GLuint m_GeometryEmissiveUniform;
+  GLuint m_EyeUniform; //!< color uniform location
 
   GLuint m_FullQuadVAO = 0; //!< screen quad VAO
   GLuint m_FullQuadVBO;     //!< screen quad VBO
+
+  GLuint m_DebugShader;
+  GLuint m_NormalModeUniform;
+  GLuint m_NormalMVPUniform;
+  GLuint m_NormalInverseMVPUniform;
+  GLuint m_NormalColorVertexUniform;
+  GLuint m_NormalColorFaceUniform;
+  GLuint m_NormalLengthUniform;
+
 };
 
 #endif

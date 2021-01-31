@@ -43,6 +43,11 @@ const std::vector<unsigned int> BoxIndices = {
   0, 1, 2, 3, 1, 3, 0, 2, 4, 5, 6, 7, 5, 7, 4, 6, 0, 4, 1, 5, 2, 6, 3, 7
   };
 
+const float LineVertices[] = {
+  // positions        
+  1.0f, 0.0f, 0.0f
+};
+
 /**
  * @brief 
  *   Constructor a new Debug Manager
@@ -211,6 +216,32 @@ void Debug::drawPoints(std::vector<glm::vec3> points, bool depthEnabled)
  */
 void Debug::drawWorldLines(std::vector<Line> lines, bool depthEnabled)
 {
+  /*
+  // temp data object
+  DrawData data;
+
+  // reserve space for size of box points
+  data.points.reserve(2);
+
+  for (int i = 0; i < std::size(LineVertices); ++i)
+  {
+    // NDC * scale + translate
+    const glm::vec3 point{ LineVertices[i] * lines.width + rect.Center.x, LineVertices[i + 1] * rect.height + rect.Center.y, LineVertices[i + 2] * rect.depth + rect.Center.z };
+    data.points.emplace_back(point);
+  }
+
+  // Set the ebo of the debug object
+  data.EBO.id = m_EBOStatic3DRect;
+  data.EBO.size = (GLuint)BoxIndices.size();
+
+  // set debug info
+  data.depthEnable = depthEnable;
+  data.fill = false;
+
+
+  // m_Queue box to draw later
+  m_Queue.emplace_back(data);
+  */
 }
 
 /**

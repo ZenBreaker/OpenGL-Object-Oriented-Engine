@@ -48,60 +48,16 @@ const float quadVertices[] = {
  * @brief
  *   Default constructor for new Rendering Manager
  */
-RenderingManager::RenderingManager()
+RenderingManager::RenderingManager():
+  m_NormalColorVertex({ 1.0, 1.0, 0.0 }),
+  m_NormalColorFace({ 0.0, 1.0, 1.0 }),
+  m_NormalLength(0.02f),
+  m_BackgroundColor({ 0.2f,0.2f ,0.2f })
 {
 }
 
-/**
- * @brief
- *   initialize for the Rendering Manager
- */
-void RenderingManager::Init()
+void RenderingManager::GenerateGeometryBuffers(int width, int height)
 {
-  {
-    GLenum error_out;
-    while ((error_out = glGetError()) != GL_NO_ERROR)
-    {
-      __debugbreak();
-      printf("oof %i", error_out);
-    }
-  }
-  // initialized member variables 
-  m_Lights.constant = 1.0f;
-  m_Lights.linear = 0.7f;
-  m_Lights.quadratic = 1.8f;
-  m_Lights.ZFar = 100.0f;
-  m_Lights.ZNear = 0.0001f;
-  m_FSQ = GeometryBuffer::All;
-  m_DepthCopy = true;
-
-  {
-    GLenum error_out;
-    while ((error_out = glGetError()) != GL_NO_ERROR)
-    {
-      __debugbreak();
-      printf("oof %i", error_out);
-    }
-  }
-
-  // Generate SSBO for Deferred Rendering
-  glGenBuffers(1, &m_SSBOUniform);
-  glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBOUniform);
-  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(LightData), &m_Lights, GL_DYNAMIC_COPY);
-  glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-  {
-    GLenum error_out;
-    while ((error_out = glGetError()) != GL_NO_ERROR)
-    {
-      __debugbreak();
-      printf("oof %i", error_out);
-    }
-  }
-  // Activate Depth Test
-  glEnable(GL_DEPTH_TEST);
-
-  // Generate geometry framebuffer for Deferred Rendering
-  glGenFramebuffers(1, &m_GeometryBuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, m_GeometryBuffer);
   {
     GLenum error_out;
@@ -111,16 +67,59 @@ void RenderingManager::Init()
       printf("oof %i", error_out);
     }
   }
-  // Get application width and height
-  const int width = Engine::get().m_Width;
-  const int height = Engine::get().m_Height;
-
+  glDeleteTextures(1, &m_GeometryPosition);
+  glDeleteTextures(1, &m_GeometryNormal);
+  glDeleteTextures(1, &m_GeometryDiffuse);
+  glDeleteTextures(1, &m_GeometryAmbient);
+  glDeleteTextures(1, &m_GeometryEmissive);
+  glDeleteTextures(1, &m_GeometrySpecular);
+  glDeleteRenderbuffers(1, &m_RenderBufferObjectDepth);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   // position color buffer
   glGenTextures(1, &m_GeometryPosition);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   glBindTexture(GL_TEXTURE_2D, m_GeometryPosition);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_GeometryPosition, 0);
   {
     GLenum error_out;
@@ -225,6 +224,81 @@ void RenderingManager::Init()
       printf("oof %i", error_out);
     }
   }
+}
+
+void RenderingManager::LoadDebugShader()
+{
+  m_DebugShader = Shader::LoadMultiShaders("DebugNormals.vert", "DebugNormals.frag", "DebugNormals.geom");
+  m_NormalModeUniform = glGetUniformLocation(m_DebugShader, "DrawMode");
+  m_NormalMVPUniform = glGetUniformLocation(m_DebugShader, "MVPMatrix");
+  m_NormalInverseMVPUniform = glGetUniformLocation(m_DebugShader, "NormalMatrix");
+  m_NormalColorVertexUniform = glGetUniformLocation(m_DebugShader, "ColorVertex");
+  m_NormalColorFaceUniform = glGetUniformLocation(m_DebugShader, "ColorFace");
+  m_NormalLengthUniform = glGetUniformLocation(m_DebugShader, "length");
+}
+
+/**
+ * @brief
+ *   initialize for the Rendering Manager
+ */
+void RenderingManager::Init()
+{
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
+  // initialized member variables 
+  m_Lights.constant = 1.0f;
+  m_Lights.linear = 0.7f;
+  m_Lights.quadratic = 1.8f;
+  m_Lights.ZFar = 100.0f;
+  m_Lights.ZNear = 0.0001f;
+  m_FSQ = GeometryBuffer::All;
+  m_DepthCopy = true;
+  m_Lights.GlobalAmbient = glm::vec3(0.2f, 0.2f, 0.2f);
+
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
+
+  // Generate SSBO for Deferred Rendering
+  glGenBuffers(1, &m_SSBOUniform);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SSBOUniform);
+  glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(LightData), &m_Lights, GL_DYNAMIC_COPY);
+  glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
+  // Activate Depth Test
+  glEnable(GL_DEPTH_TEST);
+
+  // Generate geometry framebuffer for Deferred Rendering
+  glGenFramebuffers(1, &m_GeometryBuffer);
+  {
+    GLenum error_out;
+    while ((error_out = glGetError()) != GL_NO_ERROR)
+    {
+      __debugbreak();
+      printf("oof %i", error_out);
+    }
+  }
+
+  GenerateGeometryBuffers(Engine::get().m_Width, Engine::get().m_Height);
+
   // set lighting data uniforms for Deferred Rendering
   const auto lightingPassShaderID = Engine::get().m_AssetManager.GetShader(ShaderIndex::LightingPass)->m_ProgramID;
   m_GeometryPositionUniform = glGetUniformLocation(lightingPassShaderID, "gPosition");
@@ -233,6 +307,7 @@ void RenderingManager::Init()
   m_GeometryAmbientUniform = glGetUniformLocation(lightingPassShaderID, "gAmbient");
   m_GeometrySpecularUniform = glGetUniformLocation(lightingPassShaderID, "gSpecular");
   m_GeometryEmissiveUniform = glGetUniformLocation(lightingPassShaderID, "gEmissive");
+  m_EyeUniform = glGetUniformLocation(lightingPassShaderID, "EyePosition");
   {
     GLenum error_out;
     while ((error_out = glGetError()) != GL_NO_ERROR)
@@ -259,6 +334,20 @@ void RenderingManager::Init()
       printf("oof %i", error_out);
     }
   }
+
+  LoadDebugShader();
+}
+
+void RenderingManager::ReloadShader(ShaderIndex index)
+{
+  const auto shaderProgram = Engine::get().m_AssetManager.ReloadShader(index)->m_ProgramID;
+  m_GeometryPositionUniform = glGetUniformLocation(shaderProgram, "gPosition");
+  m_GeometryNormalUniform = glGetUniformLocation(shaderProgram, "gNormal");
+  m_GeometryDiffuseUniform = glGetUniformLocation(shaderProgram, "gDiffuse");
+  m_GeometryAmbientUniform = glGetUniformLocation(shaderProgram, "gAmbient");
+  m_GeometrySpecularUniform = glGetUniformLocation(shaderProgram, "gSpecular");
+  m_GeometryEmissiveUniform = glGetUniformLocation(shaderProgram, "gEmissive");
+  m_EyeUniform = glGetUniformLocation(shaderProgram, "EyePosition");
 }
 
 /**
@@ -290,12 +379,23 @@ void RenderingManager::Shutdown()
 void RenderingManager::PreRender(Scene* scene)
 {
   // clear framebuffer
-  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  glClearColor(m_BackgroundColor.r, m_BackgroundColor.g, m_BackgroundColor.b, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // bind geometry buffer to capture lighting data
   glBindFramebuffer(GL_FRAMEBUFFER, m_GeometryBuffer);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // clear to transparent:
+  // clear to specified color:
+  static const float clearColor[] = { 0, 0, 0, 1 };
+  static const float clearFarColor[] = { 999, 999, 999, 999 };
+  glClearTexImage(m_GeometryPosition, 0, GL_RGBA, GL_FLOAT, clearFarColor);
+  glClearTexImage(m_GeometryNormal, 0, GL_RGBA, GL_FLOAT, clearColor);
+  glClearTexImage(m_GeometryDiffuse, 0, GL_RGBA, GL_FLOAT, clearColor);
+  glClearTexImage(m_GeometryAmbient, 0, GL_RGBA, GL_FLOAT, clearColor);
+  glClearTexImage(m_GeometryEmissive, 0, GL_RGBA, GL_FLOAT, clearColor);
+  glClearTexImage(m_GeometrySpecular, 0, GL_RGBA, GL_FLOAT, clearColor);
 
   // get view and projection matrices
   m_View = scene->m_Camera.GetViewMatrix();
@@ -398,6 +498,9 @@ void RenderingManager::Render(const Scene* scene)
     glUniform1i(m_GeometryEmissiveUniform, 4);
     glUniform1i(m_GeometrySpecularUniform, 5);
 
+    glm::vec4 eye(scene->m_Camera.m_Position, 1.0f);
+    glUniform4fv(m_EyeUniform, 1, &eye[0]);
+
     // enable and bind each texture
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_GeometryPosition);
@@ -467,6 +570,15 @@ void RenderingManager::PostRender(Scene* scene)
   {
     RenderObject(scene, scene->m_Lights[i], lastBindedProgramID);
   }
+
+  //draw all vertex normals and face normals
+  for (int i = 0; i < scene->m_Objects.size(); ++i)
+  {
+    if(scene->m_Objects[i].m_DrawFaceNormals || scene->m_Objects[i].m_DrawVertexNormals)
+    {
+      RenderNormals(scene, scene->m_Objects[i], lastBindedProgramID);
+    }
+  }
 }
 
 /**
@@ -501,8 +613,6 @@ void RenderingManager::RenderObject(const Scene* scene, Object& object, GLuint& 
   glUniformMatrix4fv(object.m_ModelMatrixUniform, 1, GL_FALSE, &object.matrix4()[0][0]);
   glUniformMatrix4fv(object.m_NormalMatrixUniform, 1, GL_FALSE, &object.normalMatrix()[0][0]);
 
-  glm::vec4 eye(scene->m_Camera.m_Position, 1.0f);
-  glUniform4fv(object.m_EyePositionUniform, 1, &eye[0]);
 
   glUniform3fv(object.m_AmbiantColorUniform, 1, &object.m_Material.ambiant_color[0]);
   glUniform3fv(object.m_DiffuseColorUniform, 1, &object.m_Material.diffuse_color[0]);
@@ -510,6 +620,58 @@ void RenderingManager::RenderObject(const Scene* scene, Object& object, GLuint& 
 
   glm::vec4 tempSpec = { object.m_Material.specular_color.x,object.m_Material.specular_color.y,object.m_Material.specular_color.z, object.m_Material.specular_exponent };
   glUniform4fv(object.m_SpecularColorUniform, 1, &tempSpec[0]);
+
+  // draw object 
+  glDrawElements(object.m_Model->m_DrawMode, (GLsizei)object.m_Model->m_Indices.size(), GL_UNSIGNED_INT, NULL);
+
+  glBindVertexArray(0);
+  // disable attributes
+  //glDisableVertexAttribArray(0);
+  //glDisableVertexAttribArray(1);
+}
+
+void RenderingManager::RenderNormals(const Scene* scene, Object& object, GLuint& lastBindedProgramID)
+{
+  // check if last program id is the same as the current id
+  if (lastBindedProgramID != m_DebugShader)
+  {
+    // use the new program id
+    glUseProgram(m_DebugShader);
+    lastBindedProgramID = m_DebugShader;
+  }
+
+  // bind the model's vao
+  glBindVertexArray(object.m_Model->m_VAO);
+
+  // set uniforms
+  int mode = -1;
+
+  if (object.m_DrawVertexNormals)
+  {
+    mode = 0;
+  }
+  if(object.m_DrawFaceNormals)
+  {
+    mode = 1;
+  }
+  if (object.m_DrawFaceNormals && object.m_DrawVertexNormals)
+  {
+    mode = 2;
+  }
+  auto mvp = m_Projection * m_View * object.matrix4();
+  auto normal = m_Projection * m_View * object.normalMatrix();
+  const glm::vec4 colorvert = glm::vec4(m_NormalColorVertex, 1.0f);
+  const glm::vec4 colorFace = glm::vec4(m_NormalColorFace, 1.0f);
+  glUniform1iv(m_NormalModeUniform, 1, &mode);
+
+  glUniformMatrix4fv(m_NormalMVPUniform, 1, GL_FALSE, &mvp[0][0]);
+  glUniformMatrix4fv(m_NormalInverseMVPUniform, 1, GL_FALSE, &normal[0][0]);
+
+  glUniform4fv(m_NormalColorVertexUniform, 1, &colorvert[0]);
+
+  glUniform4fv(m_NormalColorFaceUniform, 1, &colorFace[0]);
+
+  glUniform1fv(m_NormalLengthUniform, 1, &m_NormalLength);
 
   // draw object 
   glDrawElements(object.m_Model->m_DrawMode, (GLsizei)object.m_Model->m_Indices.size(), GL_UNSIGNED_INT, NULL);

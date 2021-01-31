@@ -1,7 +1,7 @@
 /* Start Header -------------------------------------------------------
-Copyright (C) 2019 DigiPen Institute of Technology.
-File Name: LightShader.frag
-Purpose: light shader to color the light
+Copyright (C) 2021 DigiPen Institute of Technology.
+File Name: DebugNormal.vert
+Purpose: 
 Language: C++ and Visual Studio 2017
 Platform:
 compiler version:
@@ -16,16 +16,21 @@ operating systems:
   Windows 10 64bit
 Project: michael.ngo_CS350_1
 Author: Michael Ngo, michael.ngo, 90003217
-Creation date: 2/2/2020
+Creation date: 1/30/2021
 End Header --------------------------------------------------------*/
 
 #version 430 core
 
-uniform vec3  AmbientColor;
+layout(location = 0) in vec3 vPosition;
+layout(location = 1) in vec3 vNormal;
 
-out vec4 FragColor;
+out Vertex
+{
+  vec4 normal;
+} vertex;
 
 void main()
 {
-	FragColor = vec4(AmbientColor, 0.0);
+  gl_Position = vec4( vPosition, 1.0f );
+  vertex.normal = vec4(vNormal.xyz, 1.0);
 }

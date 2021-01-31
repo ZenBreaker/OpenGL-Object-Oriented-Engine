@@ -246,5 +246,14 @@
     <None Include="ColorShader.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="DebugNormals.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="DebugNormals.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="DebugNormals.geom">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
