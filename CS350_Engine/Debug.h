@@ -30,11 +30,11 @@ End Header --------------------------------------------------------*/
 
 /**
  * @brief
- *   Point struct
+ *   DebugPoint struct
  */
-struct Point
+struct DebugPoint
 {
-  Point(const glm::vec3 & point, const glm::vec3& color = {1,1,1}) : point(point), color(color) {}
+  DebugPoint(const glm::vec3 & point, const glm::vec3& color = {1,1,1}) : point(point), color(color) {}
   glm::vec3 point;
   glm::vec3 color;
 };
@@ -100,7 +100,7 @@ struct EBOData
  */
 struct DrawData
 {
-  std::vector<Point> points; //!< vertices
+  std::vector<DebugPoint> points; //!< vertices
   EBOData EBO;               //!< EBO Data        
   bool depthEnable;          //!< depth enable
   bool fill;                 //!< fill 

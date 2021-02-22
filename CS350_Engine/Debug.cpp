@@ -155,9 +155,9 @@ void Debug::Update()
 
   // enable attribute location 0 and 1
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Point), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DebugPoint), (void*)0);
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Point), (void*)offsetof(Point, color));
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DebugPoint), (void*)offsetof(DebugPoint, color));
 
   // Set matrix uniforms for the shader 
   glUniformMatrix4fv(m_ViewUniform, 1, GL_FALSE, &Engine::get().m_RenderingManager.m_View[0][0]);
@@ -171,7 +171,7 @@ void Debug::Update()
   for (int i = 0; i < m_Queue.size(); ++i)
   {
     // set buffer data
-    glBufferData(GL_ARRAY_BUFFER, m_Queue[i].points.size() * sizeof(Point), m_Queue[i].points.data(), GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_Queue[i].points.size() * sizeof(DebugPoint), m_Queue[i].points.data(), GL_STREAM_DRAW);
 
     if(lastBindedEBO != m_Queue[i].EBO.id)
     {

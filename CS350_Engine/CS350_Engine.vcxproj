@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="AxisAlingedBoundingBox.cpp" />
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="BoundingHierarchy.cpp" />
@@ -187,11 +188,13 @@
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="AxisAlingedBoundingBox.h" />
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BoundingHierarchy.h" />
     <ClInclude Include="BoundingSphere.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Engine.h" />
@@ -206,10 +209,16 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="Point3D.h" />
+    <ClInclude Include="Point4D.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="RenderingManager.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="models\4Sphere.obj">
