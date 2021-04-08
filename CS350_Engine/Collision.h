@@ -21,7 +21,8 @@ End Header --------------------------------------------------------*/
 
 #ifndef COLLISION_H
 #define COLLISION_H
-#include <glm/detail/func_geometric.inl>
+#include <glm/glm.hpp>
+
 
 #include "AABB.h"
 #include "Plane.h"
@@ -43,6 +44,7 @@ static void SwapTwo(T a, T b)
 
 class Collision
 {
+public:
   //Basic Intersection
   static bool SphereSphere(const Sphere& a, const Sphere& b)
   {
@@ -132,6 +134,19 @@ class Collision
 
     //on the plane
     return true;
+  }
+
+  static bool RayPlane(const Ray& ray, const Plane& plane, float& t)
+  {
+    // assuming vectors are all normalized
+    float denom = glm::dot((glm::vec3)plane.m_Normal, ray.m_Direction);
+    if (denom > 1e-6) {
+      glm::vec3 p0l0 = plane.m_RandomPointOnPlane - ray.m_Position;
+      t = glm::dot(p0l0, (glm::vec3)plane.m_Normal) / denom;
+      return (t >= 0);
+    }
+
+    return false;
   }
 
   static bool RayAAABB(const Ray& ray, const AABB& aabb)

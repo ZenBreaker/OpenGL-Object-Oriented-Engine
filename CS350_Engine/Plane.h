@@ -21,9 +21,8 @@ End Header --------------------------------------------------------*/
 
 #ifndef PLANE_H
 #define PLANE_H
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/detail/func_geometric.inl>
+#include <glm/glm.hpp>
+
 
 #include "Triangle.h"
 
@@ -33,11 +32,15 @@ public:
   // (n.x, n.y, n.z, d)
   // a*x + b*y + c*z + d = 0
   // a*x + b*y + c*z = -d
-  Plane(glm::vec3 normal, float d)
+  Plane(glm::vec3 normal = glm::vec3{ 1,1,1 }, float d = 1)
   {
     m_Normal.w = d / glm::length(normal);
     (glm::vec3)m_Normal = normalize(normal);
-  }
+
+    m_RandomPointOnPlane.x = -m_Normal.x * m_Normal.w;
+    m_RandomPointOnPlane.y = -m_Normal.y * m_Normal.w;
+    m_RandomPointOnPlane.z = -m_Normal.z * m_Normal.w;
+  }  
 
   Plane(Triangle triangle)
   {
@@ -51,6 +54,8 @@ public:
     m_Normal.w = m_Normal.w / glm::length((glm::vec3)m_Normal);
 
     normalize(m_Normal);
+
+    m_RandomPointOnPlane = triangle.v1;
   }
 
   float DistanceFromPlane(glm::vec3 point) const
@@ -59,6 +64,7 @@ public:
   }
 
   glm::vec4 m_Normal;
+  glm::vec3 m_RandomPointOnPlane;
 };
 
 #endif

@@ -26,6 +26,47 @@ End Header --------------------------------------------------------*/
 class Triangle
 {
 public:
+  Triangle(const glm::vec3& _v1 = { 0,0,0 }, const glm::vec3& _v2 = { 1,0,0 }, const glm::vec3& _v3 = {0,1,0}) :
+    v1(_v1),
+    v2(_v2),
+    v3(_v3)
+  {}
+
+  const glm::vec3& operator[](size_t index) const
+  {
+    switch (index)
+    {
+    case 0:
+      return v1;
+    case 1:
+      return v2;
+    case 2:
+      return v3;
+    }
+
+    throw "You dumb, indexing out of the array";
+  }
+
+  glm::vec3& operator[](size_t index)
+  {
+    switch (index)
+    {
+    case 0:
+      return v1;
+    case 1:
+      return v2;
+    case 2:
+      return v3;
+    }
+
+    throw "You dumb, indexing out of the array";
+  }
+
+  size_t size() const
+  {
+    return 3;
+  }
+
   glm::vec3 v1;
   glm::vec3 v2;
   glm::vec3 v3;

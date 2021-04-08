@@ -137,6 +137,25 @@ void Editor::PostRender()
   }
 
 
+  if (ImGui::Button("Update Oct Tree"))
+  {
+    Engine::get().m_SceneManager.m_CurrentScene->UpdateOctTree();
+  }
+
+  if (Engine::get().m_SceneManager.m_CurrentScene->m_OctTreeHead)
+  {
+    if (ImGui::Checkbox("Show Oct Tree", &Engine::get().m_SceneManager.m_CurrentScene->m_OctTreeHead->showBoxes)) {}
+  }
+
+  if (ImGui::Button("Update BSP"))
+  {
+    Engine::get().m_SceneManager.m_CurrentScene->UpdateBSP();
+  }
+  
+  if (Engine::get().m_SceneManager.m_CurrentScene->m_BSPHead)
+  {
+    if (ImGui::Checkbox("Show BSP", &Engine::get().m_SceneManager.m_CurrentScene->m_BSPHead->showLines)) {}
+  }
 
   if (ImGui::ColorEdit3("Background Color", &Engine::get().m_RenderingManager.m_BackgroundColor[0])) {}
 

@@ -35,13 +35,14 @@ Object::Object(const char* name) :
   m_RotationAngle(0.0f),
   m_RotationAmount(0.0f),
   m_DrawAABB(false),
-  m_DrawBoundingSphere(false),
+  m_DrawBoundingSphere(true),
   m_IsDirty(true),
   m_MVP(),
   m_NormalMVP(),
   m_IsRotating(false),
   m_DrawVertexNormals(false),
-  m_DrawFaceNormals(false)
+  m_DrawFaceNormals(false),
+  m_Light(nullptr)
 {
 }
 

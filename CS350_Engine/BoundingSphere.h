@@ -75,10 +75,34 @@ public:
   // PCA Method calculation
   void PCAMethod(const std::vector<glm::vec3>& vertices);
   
-private:
+public:
   glm::vec3 m_Center;  //!< Center of the sphere
   float m_Radius;      //!< Radius of the sphere
   Type m_Type; //!< Bounding type
+
+
+  static void BoundingSphereCentroid(const std::vector<glm::vec3>& vertices)
+  {
+    glm::vec3 center;
+    float radius = 0.0f;
+
+    for (unsigned int i = 0; i < vertices.size(); ++i)
+    {
+      center += vertices[i];
+    }
+
+    center /= (float)vertices.size();
+
+    for (unsigned int i = 0; i < vertices.size(); ++i)
+    {
+      const float dx = center.x - vertices[i].x;
+      const float dy = center.y - vertices[i].y;
+      const float dz = center.z - vertices[i].z;
+      radius = std::max(dx * dx + dy * dy + dz * dz, radius);
+    }
+
+    radius = sqrtf(radius) * 2.0f;
+  }
 };
 
 

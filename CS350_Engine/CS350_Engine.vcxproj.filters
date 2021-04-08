@@ -96,6 +96,12 @@
     <ClCompile Include="AABB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OctTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BSP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h">
@@ -189,6 +195,12 @@
       <Filter>Source Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OctTree.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BSP.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

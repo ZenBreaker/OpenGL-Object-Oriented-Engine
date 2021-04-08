@@ -168,6 +168,7 @@
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="BoundingHierarchy.cpp" />
     <ClCompile Include="BoundingSphere.cpp" />
+    <ClCompile Include="BSP.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Editor.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="OctTree.cpp" />
     <ClCompile Include="RenderingManager.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -193,6 +195,7 @@
     <ClInclude Include="AssetManager.h" />
     <ClInclude Include="BoundingHierarchy.h" />
     <ClInclude Include="BoundingSphere.h" />
+    <ClInclude Include="BSP.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Debug.h" />
@@ -209,6 +212,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="OctTree.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Point3D.h" />
     <ClInclude Include="Point4D.h" />

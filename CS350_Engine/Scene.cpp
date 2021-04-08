@@ -27,6 +27,10 @@ End Header --------------------------------------------------------*/
 #include "Scene.h"
 #include "Engine.h"
 
+static bool once = true;
+
+#define OCTLEVEL 4
+#define OCTHALFWIDTH 15
 
 Scene::Scene(SceneIndex number)
 {
@@ -34,6 +38,7 @@ Scene::Scene(SceneIndex number)
   m_BoundingHierarchy.m_Construction = BoundingHierarchy::Construction::BottomUp;
   m_BoundingHierarchy.m_Method = BoundingHierarchy::Method::AABB;
   m_IsDrawingBoundingHierarchy = false;
+  m_OctTreeHead = BuildOctree({ 0,0,0 }, OCTHALFWIDTH, OCTLEVEL);
 
 	switch (number)
 	{
@@ -42,14 +47,14 @@ Scene::Scene(SceneIndex number)
   case ONE:
   {
     Object& object1 = AddObject();
-    object1.m_Model = Engine::get().m_AssetManager.GetModel(Model::Bunny);
+    object1.m_Model = Engine::get().m_AssetManager.GetModel(Model::Cube);
     object1.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object1.SetCentroid(glm::vec3(0.0f, 0.0f, 0.0f));
     object1.m_Material.ambiant_color = glm::vec3(1.0f, 0.3f, 1.0f);
 
     Object& object2 = AddObject();
     //object2.SetScaleVector({ 0,0,0 });
-    object2.m_Model = Engine::get().m_AssetManager.GetModel(Model::Sphere);
+    object2.m_Model = Engine::get().m_AssetManager.GetModel(Model::Cube);
     object2.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object2.SetCentroid(glm::vec3(2.17f, -0.590f, 0.51f));
     object2.m_Material.ambiant_color = glm::vec3(0.4f, 1.0f, 1.0f);
@@ -57,14 +62,14 @@ Scene::Scene(SceneIndex number)
 
     Object& object3 = AddObject();
     //object3.SetScaleVector({ 0,0,0 });
-    object3.m_Model = Engine::get().m_AssetManager.GetModel(Model::FourSphere);
+    object3.m_Model = Engine::get().m_AssetManager.GetModel(Model::Cube);
     object3.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object3.SetCentroid(glm::vec3(-1.690f, 0.88f, -0.870f));
     object3.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 0.0f);
 
     Object& object4 = AddObject();
     //object4.SetScaleVector({ 0,0,0 });
-    object4.m_Model = Engine::get().m_AssetManager.GetModel(Model::BunnyHighPoly);
+    object4.m_Model = Engine::get().m_AssetManager.GetModel(Model::Cube);
     object4.SetShader(Engine::get().m_AssetManager.GetShader(ShaderIndex::DeferredFirstPassShader));
     object4.SetCentroid(glm::vec3(-0.60f, -0.430f, 0.310f));
     object4.m_Material.ambiant_color = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -91,6 +96,8 @@ Scene::Scene(SceneIndex number)
   default:
     break;
 	}
+  UpdateBSP();
+
 }
 
 Scene::~Scene()
@@ -122,6 +129,16 @@ void Scene::Update(float deltaTime)
   {
     m_BoundingHierarchy.Draw(m_Objects);
   }
+
+  if (m_OctTreeHead && m_OctTreeHead->showBoxes)
+  {
+    m_OctTreeHead->Draw();
+  }
+
+  if (m_BSPHead && m_BSPHead->showLines)
+  {
+    m_BSPHead->Draw();
+  }
 }
 
 Object& Scene::AddObject()
@@ -136,4 +153,40 @@ Object& Scene::AddLight()
   m_Lights.emplace_back("Light");
 
   return m_Lights.back();
+}
+
+void Scene::UpdateOctTree()
+{
+  m_OctTreeHead = BuildOctree({ 0,0,0 }, OCTHALFWIDTH, OCTLEVEL);
+
+  for (int i = 0; i < m_Objects.size(); ++i)
+  {
+    if (!m_Objects[i].m_Light)
+    {
+      OctTreeInsertObject(m_OctTreeHead, &m_Objects[i]);
+    }
+  }
+}
+
+void Scene::UpdateBSP()
+{
+  wholeMeshVert.clear();
+  wholeMeshIndex.clear();
+
+  for (Object& object : m_Objects)
+  {
+    if (!object.m_Light)
+    {
+      glm::mat4 modelToWorldMatrix = object.matrix4();
+      std::vector<glm::vec3> verts = object.m_Model->m_Vertices;
+      for (glm::vec3& vert : verts)
+      {
+        vert = glm::vec3(modelToWorldMatrix * glm::vec4(vert, 1.0f));
+      }
+
+      UniqueAddVerties(verts, object.m_Model->m_Indices, wholeMeshVert, wholeMeshIndex);
+    }
+  }
+
+  m_BSPHead = BuildBSPTree(wholeMeshVert, wholeMeshIndex, 0);
 }
