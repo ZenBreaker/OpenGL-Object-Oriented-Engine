@@ -12,7 +12,7 @@ void OctTreeNode::Draw()
     }
   }
 
-  if (objectsList.size() != 0)
+  if (showBoxes)
   {
     Rect3D rect;
     rect.Center = center;
@@ -20,6 +20,9 @@ void OctTreeNode::Draw()
     rect.height = halfWidth * 2;
     rect.width = halfWidth * 2;
 
-    Engine::get().m_Debug.drawWorldRects(rect, { 1,1,1 }, true);
+    glm::vec3 color(level * 1.0f/ maxDepth);
+
+
+    Engine::get().m_Debug.drawWorldRects(rect, color, true);
   }
 }

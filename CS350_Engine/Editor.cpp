@@ -88,6 +88,50 @@ void Editor::Render()
 {
 }
 
+void OctTreeRecursion_aux(OctTreeNode* node, std::string boxstring)
+{
+  if (!node) 
+    return;
+
+  ImGui::PushStyleColor(0, ImColor::HSV(180, node->level * 1.0f / node->maxDepth ,1).Value);
+
+  for (size_t i = 0; i < 8; i++)
+  {
+    if (node->childrenList[i])
+    {
+      if (ImGui::TreeNode(node->childrenList[i], (boxstring + " [%i]").c_str(), (int)i))
+      {
+        node->childrenList[i]->showBoxes = true;
+
+        std::string nodeString = boxstring + " [";
+        nodeString.append(std::to_string(i));
+        nodeString.append("]");
+
+        if (node->childrenList[i]->childrenList[0])
+        {
+          OctTreeRecursion_aux(node->childrenList[i], nodeString);
+        }
+
+        ImGui::TreePop();
+      }
+      else
+      {
+        node->childrenList[i]->showBoxes = false;
+      }
+    }
+  }
+  ImGui::PopStyleColor();
+
+}
+
+void OctTreeRecursion()
+{
+  OctTreeNode* head = Engine::get().m_SceneManager.m_CurrentScene->m_OctTreeHead;
+  head->showBoxes = true;
+  std::string boxstring = "Oct Tree Child";
+  OctTreeRecursion_aux(head, boxstring);
+}
+
 /**
  * @brief 
  *   Post Render for the editor
@@ -144,7 +188,13 @@ void Editor::PostRender()
 
   if (Engine::get().m_SceneManager.m_CurrentScene->m_OctTreeHead)
   {
-    if (ImGui::Checkbox("Show Oct Tree", &Engine::get().m_SceneManager.m_CurrentScene->m_OctTreeHead->showBoxes)) {}
+
+    if (ImGui::TreeNode("Oct Tree"))
+    {
+      OctTreeRecursion();
+      ImGui::TreePop();
+
+    }
   }
 
   if (ImGui::Button("Update BSP"))

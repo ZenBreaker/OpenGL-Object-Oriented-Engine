@@ -39,9 +39,10 @@ public:
   {
     childrenList.resize(8);
   }
-
+  static const int maxDepth = 4;
   glm::vec3 center = glm::vec3{0,0,0};
   float halfWidth = -1;
+  OctTreeNode* parent;
   std::vector<OctTreeNode*> childrenList;
   std::vector<Object*> objectsList;
   bool showBoxes = false;
@@ -72,6 +73,10 @@ inline OctTreeNode* BuildOctree(glm::vec3 center, float halfWidth, int level)
       offset.y = ((i & 2) ? step : -step);
       offset.z = ((i & 4) ? step : -step);
       node->childrenList[i] = BuildOctree(center + offset, step, level - 1);
+      if (node->childrenList[i])
+      {
+        node->childrenList[i]->parent = node;
+      }
     }
     node->level = level;
     return node;

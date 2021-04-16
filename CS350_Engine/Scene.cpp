@@ -29,7 +29,6 @@ End Header --------------------------------------------------------*/
 
 static bool once = true;
 
-#define OCTLEVEL 4
 #define OCTHALFWIDTH 15
 
 Scene::Scene(SceneIndex number)
@@ -38,7 +37,7 @@ Scene::Scene(SceneIndex number)
   m_BoundingHierarchy.m_Construction = BoundingHierarchy::Construction::BottomUp;
   m_BoundingHierarchy.m_Method = BoundingHierarchy::Method::AABB;
   m_IsDrawingBoundingHierarchy = false;
-  m_OctTreeHead = BuildOctree({ 0,0,0 }, OCTHALFWIDTH, OCTLEVEL);
+  m_OctTreeHead = BuildOctree({ 0,0,0 }, OCTHALFWIDTH, OctTreeNode::maxDepth);
 
 	switch (number)
 	{
@@ -157,7 +156,7 @@ Object& Scene::AddLight()
 
 void Scene::UpdateOctTree()
 {
-  m_OctTreeHead = BuildOctree({ 0,0,0 }, OCTHALFWIDTH, OCTLEVEL);
+  m_OctTreeHead = BuildOctree({ 0,0,0 }, OCTHALFWIDTH, OctTreeNode::maxDepth);
 
   for (int i = 0; i < m_Objects.size(); ++i)
   {
